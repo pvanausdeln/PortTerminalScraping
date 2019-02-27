@@ -79,6 +79,7 @@ def getSize(size):
         return 53
 
 def Seattle46Post(terminal, container, postJson, eventCode, eventName):
+    print("B")
     postJson["eventName"] = eventName
     postJson["eventCode"] = eventCode
     postJson["signedBy"] = "Gandalf"
@@ -106,36 +107,31 @@ def Seattle46Post(terminal, container, postJson, eventCode, eventName):
 def Seattle46(terminal, container):
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping"+"\\"+terminal+"\\"+container+".json") as jsonData:
         data = json.load(jsonData)
-    print(container)
-    print(json.dumps(data))
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     postJson["unitId"] = data["Container Number"]
     postJson["vessel"] = data["Vessel"] #mandatory
     postJson["voyageNumber"] = data["Voyage"] #mandatory
     postJson["resolvedEventStatus"] = data["Trouble Transaction"]
-    postJson["eventTime"] = data["Appt Time"].split("~")[0]+":00" if (data["Appt Time"].find("~") == 0) else datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
+    postJson["eventTime"] = data["Appt Time"].split("~")[0]+":00" if (data["Appt Time"].find("~") != -1) else datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
     postJson["unitSize"] = getSize(data["Container Type/Length/Height"])
     postJson["reasonName"] = data["Miscellaneous Hold Reason"]
-    if(data["Available for Pickup"].find("Yes") == 0):
+
+    if(data["Available for Pickup"].find("Yes") != -1):
         Seattle46Post(terminal, container, postJson, "AV", "Available For Pickup")
-    if(data["Yard Location"].find("Out-Gated") == 0):
+    if(data["Yard Location"].find("Out-Gated") != -1):
         postJson["eventTime"] = datetime.datetime.strptime(data["Yard Location"].split('(')[1].split(')')[0] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
         Seattle46Post(terminal, container, postJson, "OA", "Outgate")
     #elif(data["Yard Location"].find("On Ship")):
         #Seattle46Post(terminal, container, postJson, "IT", "In Transit")
-    elif(data["Yard Location"].find("Delivered") and data["Appt Time"].find("~") == 0):
+    elif(data["Yard Location"].find("Delivered") != -1 and data["Appt Time"].find("~") != -1):
         Seattle46Post(terminal, container, postJson, "AFD", "Arrived For Delivery")
-    if(data["Hold Reason"].find("Released") == 0):
-        print(data["Hold Reason"])
+    if(data["Hold Reason"].find("Released") != -1):
         Seattle46Post(terminal, container, postJson, "CH", "Customs Hold")
-    if(data["Customs Status"].find("Released") == 0):
-        print(data["Customs Status"])
+    if(data["Customs Status"].find("Released") != -1):
         Seattle46Post(terminal, container, postJson, "CT", "Customs Release")
-    if(data["Freight Status"].find("Released") == 0):
-        print(data["Freight Status"])
+    if(data["Freight Status"].find("Released") != -1):
         Seattle46Post(terminal, container, postJson, "FS", "Freight Release")
-    if(data["Carrier Status"].find("Released") == 0):
-        print(data["Carrier Status"])
+    if(data["Carrier Status"].find("Released") != -1):
         Seattle46Post(terminal, container, postJson, "CR", "Carrier Release")
 
 
@@ -150,6 +146,3 @@ if __name__ == "__main__":
 
 #if yard location is on ship
 #something with onship/in transit (IT)
-#if yard location is delivered
-#event type = delivered (AF)
-#if no appointment time -> no pickup event
