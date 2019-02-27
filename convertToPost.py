@@ -79,7 +79,6 @@ def getSize(size):
         return 53
 
 def Seattle46Post(terminal, container, postJson, eventCode, eventName):
-    print("B")
     postJson["eventName"] = eventName
     postJson["eventCode"] = eventCode
     postJson["signedBy"] = "Gandalf"
@@ -121,8 +120,8 @@ def Seattle46(terminal, container):
     if(data["Yard Location"].find("Out-Gated") != -1):
         postJson["eventTime"] = datetime.datetime.strptime(data["Yard Location"].split('(')[1].split(')')[0] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
         Seattle46Post(terminal, container, postJson, "OA", "Outgate")
-    #elif(data["Yard Location"].find("On Ship")):
-        #Seattle46Post(terminal, container, postJson, "IT", "In Transit")
+    elif(data["Yard Location"].find("On Ship")  != -1):
+        Seattle46Post(terminal, container, postJson, "IT", "In Transit (Ocean)")
     elif(data["Yard Location"].find("Delivered") != -1 and data["Appt Time"].find("~") != -1):
         Seattle46Post(terminal, container, postJson, "AFD", "Arrived For Delivery")
     if(data["Hold Reason"].find("Released") != -1):
@@ -143,6 +142,3 @@ def main(terminal, container):
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])
-
-#if yard location is on ship
-#something with onship/in transit (IT)
