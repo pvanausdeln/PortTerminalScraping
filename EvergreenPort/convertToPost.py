@@ -73,9 +73,29 @@ class baseInfo:
 def EverportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
+    if(data["Move Type"] not in ["Discharge", "Load", "Export In"]):
+        return
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+    if(data["Move Type"] == "Discharge"):
+        postJson["eventCode"] = "APL"
+        postJson["eventName"] = "Available For Pickup"
+    if(data["Move Type"] == "Load"):
+        postJson["eventCode"] = "AE"
+        postJson["eventName"] = "Loaded On Vessel"
+    if(data["Move Type"] == "Export In"):
+        postJson["eventCode"] = "I"
+        postJson["eventName"] = "INGATE"
     postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-    print(postJson["eventTime"])
+    postJson["unitId"] = data["Container"]
+    postJson["carrierName"] = data["Trucker"]
+    postJson["carrierCode"] = data["Carrier"]
+    postJson["sealNumber"] = data["Seal"]
+    #TODO: Vessel/Voyage numbers
+    #TODO: Reference Numbers/Work Order Numbers
+    print(json.dumps(postJson))
+    #TODO: config file for post urls
+    #headers = {'content-type':'application/json'}
+    #r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     return
 
 def main(terminal, container):
