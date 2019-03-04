@@ -90,6 +90,13 @@ def EverportPost(step):
     postJson["carrierName"] = data["Trucker"]
     postJson["carrierCode"] = data["Carrier"]
     postJson["sealNumber"] = data["Seal"]
+    postJson["resolvedEventSource"] = "EVERPORT LA RPA"
+    postJson["longitude"] = -118.24
+    postJson["latitude"] = 33.76
+    postJson["address"] = "389 Terminal Island Way Terminal Island, CA 90731"
+    postJson["country"] = "US"
+    postJson["state"] = "CA"
+    postJson["city"] = "Los Angeles"
     #TODO: Vessel/Voyage numbers
     #TODO: Reference Numbers/Work Order Numbers
     print(json.dumps(postJson))
