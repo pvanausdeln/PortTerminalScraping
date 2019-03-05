@@ -4,7 +4,6 @@ import json
 import copy
 import requests
 import datetime
-import mysql.connector
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
@@ -84,13 +83,6 @@ def Seattle46Post(terminal, container, postJson, eventCode, eventName):
     postJson["signedBy"] = "Gandalf"
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Seattle T46 RPA"
-    #TODO: get work order somehow; hard-coding for now ¯\_(ツ)_/¯
-    if(container == 'TRLU9069474'):
-        postJson["workOrderNumber"] = "SHI94436109"
-    elif(container == 'MSKU0623840'):
-        postJson["workOrderNumber"] = "SHI92139404"
-    #TODO: get shipment reference number?
-    #postJson["shipmentReferenceNumber"] = "ShipRef24336522600"
     postJson["city"] = "Seattle" #mandatory
     postJson["country"] = "US" #mandatory
     postJson["state"] = "WA"
@@ -114,6 +106,9 @@ def Seattle46(terminal, container):
     postJson["eventTime"] = data["Appt Time"].split("~")[0]+":00" if (data["Appt Time"].find("~") != -1) else datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
     postJson["unitSize"] = getSize(data["Container Type/Length/Height"])
     postJson["reasonName"] = data["Miscellaneous Hold Reason"]
+    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
 
     if(data["Available for Pickup"].find("Yes") != -1):
         Seattle46Post(terminal, container, postJson, "AV", "Available For Pickup")
@@ -137,8 +132,7 @@ def Seattle46(terminal, container):
 
 
 def main(terminal, container):
-    if(terminal == "SeattleTerminal46"):
-        Seattle46(terminal, container)
+    Seattle46(terminal, container)
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])

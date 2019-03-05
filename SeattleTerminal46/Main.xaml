@@ -4,7 +4,6 @@
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
  xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
  xmlns:p="http://schemas.uipath.com/workflow/activities/python"
- xmlns:s="clr-namespace:System;assembly=mscorlib"
  xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
  xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
  xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
@@ -67,13 +66,10 @@
       <AssemblyReference>Newtonsoft.Json</AssemblyReference>
       <AssemblyReference>System.Collections.Immutable</AssemblyReference>
       <AssemblyReference>UiPath.Python</AssemblyReference>
-      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
     <Sequence.Variables>
-      <Variable x:TypeArguments="s:String[]" Default="[{&quot;SeattleTerminal18&quot;,&quot;SeattleTerminal30&quot;, &quot;SeattleTerminal46&quot;}]" Name="terminalChoices" />
-      <Variable x:TypeArguments="x:String" Default="TRLU9069474" Name="containerNumber" />
       <Variable x:TypeArguments="ui:Browser" Name="chromeBrowser" />
       <Variable x:TypeArguments="scg:Dictionary(x:String, x:String)" Name="infoArray" />
       <Variable x:TypeArguments="x:String" Name="jsonString" />
@@ -81,7 +77,10 @@
       <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="Containers" />
       <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="Vessels" />
       <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="Voyages" />
-      <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="Terminals" />
+      <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="WorkOrders" />
+      <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="ReferenceNumbers" />
+      <Variable x:TypeArguments="scg:IEnumerable(x:Object)" Name="BOLNumbers" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="ContainerExists" />
     </Sequence.Variables>
     <ui:ExcelApplicationScope Password="{x:Null}" DisplayName="Excel Application Scope" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1" WorkbookPath="Test.xlsx">
       <ui:ExcelApplicationScope.Body>
@@ -93,7 +92,9 @@
             <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_1" Result="[Containers]" SheetName="Sheet1" StartingCell="A2" />
             <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_2" Result="[Vessels]" SheetName="Sheet1" StartingCell="B2" />
             <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_3" Result="[Voyages]" SheetName="Sheet1" StartingCell="C2" />
-            <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_4" Result="[Terminals]" SheetName="Sheet1" StartingCell="D2" />
+            <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_5" Result="[WorkOrders]" SheetName="Sheet1" StartingCell="D2" />
+            <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_6" Result="[ReferenceNumbers]" SheetName="Sheet1" StartingCell="E2" />
+            <ui:ExcelReadColumn DisplayName="Read Column" sap2010:WorkflowViewState.IdRef="ExcelReadColumn_7" Result="[BOLNumbers]" SheetName="Sheet1" StartingCell="F2" />
           </Sequence>
         </ActivityAction>
       </ui:ExcelApplicationScope.Body>
@@ -178,91 +179,109 @@
                         <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="608866d7908ecd069e36d0231560c38b" Selector="&lt;webctrl css-selector='body&amp;gt;form&amp;gt;table&amp;gt;tbody&amp;gt;tr&amp;gt;td&amp;gt;table&amp;gt;tbody&amp;gt;tr&amp;gt;td&amp;gt;table&amp;gt;tbody&amp;gt;tr&amp;gt;td&amp;gt;img' parentid='form' tableCol='5' tableRow='2' tag='IMG' /&gt;" WaitForReady="INTERACTIVE" />
                       </ui:Click.Target>
                     </ui:Click>
-                    <Sequence DisplayName="Data Scraping" sap2010:WorkflowViewState.IdRef="Sequence_26">
-                      <Sequence.Variables>
-                        <Variable x:TypeArguments="x:Int32" Name="index" />
-                      </Sequence.Variables>
-                      <ui:BrowserScope Browser="{x:Null}" SearchScope="{x:Null}" TimeoutMS="{x:Null}" UiBrowser="{x:Null}" BrowserType="Chrome" DisplayName="Attach Browser 'TNS Page'" sap2010:WorkflowViewState.IdRef="BrowserScope_2" InformativeScreenshot="a8dea2a15e5abe28981c46d1debefa2d" Selector="&lt;html app='chrome.exe' title='::::::::::: TNS :::::::::::' /&gt;">
-                        <ui:BrowserScope.Body>
-                          <ActivityAction x:TypeArguments="x:Object">
-                            <ActivityAction.Argument>
-                              <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
-                            </ActivityAction.Argument>
-                            <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_25">
-                              <ui:ExtractData NextLinkSelector="{x:Null}" ContinueOnError="True" DataTable="[ExtractDataTable]" DelayBetweenPagesMS="300" DisplayName="Extract Structured Data 'TABLE  grid1'" ExtractMetadata="&lt;extract-table get_columns_name='1' get_empty_columns='1' /&gt;" sap2010:WorkflowViewState.IdRef="ExtractData_2" MaxNumberOfResults="100">
-                                <ui:ExtractData.Target>
-                                  <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="c70a0462cb23ece6f35ac0bd3c14a208" Selector="&lt;webctrl id='businessView' tag='IFRAME' /&gt;&lt;webctrl id='grid1' tag='TABLE' /&gt;" WaitForReady="COMPLETE" />
-                                </ui:ExtractData.Target>
-                              </ui:ExtractData>
-                            </Sequence>
-                          </ActivityAction>
-                        </ui:BrowserScope.Body>
-                      </ui:BrowserScope>
-                    </Sequence>
-                    <Sequence DisplayName="Create Array" sap2010:WorkflowViewState.IdRef="Sequence_27">
-                      <Assign sap2010:WorkflowViewState.IdRef="Assign_3">
-                        <Assign.To>
-                          <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[infoArray]</OutArgument>
-                        </Assign.To>
-                        <Assign.Value>
-                          <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[new Dictionary(Of String, String)]</InArgument>
-                        </Assign.Value>
-                      </Assign>
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_48" Key="Container Number" Value="[ExtractDataTable.Rows(1).Item(1).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_49" Key="Available for Pickup" Value="[ExtractDataTable.Rows(1).Item(3).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_50" Key="Container Seq" Value="[ExtractDataTable.Rows(1).Item(4).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_51" Key="Trouble Transaction" Value="[ExtractDataTable.Rows(1).Item(7).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_52" Key="Appt Time" Value="[ExtractDataTable.Rows(1).Item(8).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_53" Key="Yard Location" Value="[ExtractDataTable.Rows(1).Item(9).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_54" Key="Hold Reason" Value="[ExtractDataTable.Rows(1).Item(10).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_55" Key="Customs Status" Value="[ExtractDataTable.Rows(1).Item(11).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_56" Key="Freight Status" Value="[ExtractDataTable.Rows(1).Item(12).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_57" Key="USDA Status" Value="[ExtractDataTable.Rows(1).Item(13).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_58" Key="Carrier Status" Value="[ExtractDataTable.Rows(1).Item(14).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_59" Key="Terminal Status" Value="[ExtractDataTable.Rows(1).Item(15).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_60" Key="Demurrage Due?" Value="[ExtractDataTable.Rows(1).Item(16).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_61" Key="Demurrage Amount" Value="[ExtractDataTable.Rows(1).Item(17).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_62" Key="Last Free Day" Value="[ExtractDataTable.Rows(1).Item(18).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_63" Key="Paid Through Date" Value="[ExtractDataTable.Rows(1).Item(19).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_64" Key="SSCO" Value="[ExtractDataTable.Rows(1).Item(20).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_65" Key="SCAC" Value="[ExtractDataTable.Rows(1).Item(21).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_66" Key="Container Type/Length/Height" Value="[ExtractDataTable.Rows(1).Item(22).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_67" Key="Miscellaneous Hold Reason" Value="[ExtractDataTable.Rows(1).Item(23).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_68" Key="Terminal Hold Reason" Value="[ExtractDataTable.Rows(1).Item(24).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_69" Key="trkrCd" Value="[ExtractDataTable.Rows(1).Item(25).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_70" Key="Customs Hold Reason" Value="[ExtractDataTable.Rows(1).Item(26).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_71" Key="Vessel" Value="[Vessels.ToList().ElementAt(index).ToString]" />
-                      <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_72" Key="Voyage" Value="[Voyages.ToList().ElementAt(index).ToString]" />
-                    </Sequence>
-                    <Assign sap2010:WorkflowViewState.IdRef="Assign_4">
-                      <Assign.To>
-                        <OutArgument x:TypeArguments="x:String">[jsonString]</OutArgument>
-                      </Assign.To>
-                      <Assign.Value>
-                        <InArgument x:TypeArguments="x:String">[JsonConvert.SerializeObject(infoArray)]</InArgument>
-                      </Assign.Value>
-                    </Assign>
-                    <ui:PathExists DisplayName="Path Exists" Exists="[pathExists]" sap2010:WorkflowViewState.IdRef="PathExists_2" Path="./ContainerInformation/" PathType="Folder" />
-                    <If Condition="[pathExists]" sap2010:WorkflowViewState.IdRef="If_8">
+                    <ui:UiElementExists DisplayName="Element Exists 'TD'" Exists="[ContainerExists]" sap2010:WorkflowViewState.IdRef="UiElementExists_1">
+                      <ui:UiElementExists.Target>
+                        <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" InformativeScreenshot="bf5842384e443c094bb9c67ad2e797dc" Selector="&lt;webctrl id='businessView' tag='IFRAME' /&gt;&lt;webctrl id='grid1' tag='TABLE' /&gt;&lt;webctrl parentid='1' tableCol='1' tag='TD' /&gt;" TimeoutMS="3000" WaitForReady="INTERACTIVE" />
+                      </ui:UiElementExists.Target>
+                    </ui:UiElementExists>
+                    <If Condition="[ContainerExists]" sap2010:WorkflowViewState.IdRef="If_9">
+                      <If.Then>
+                        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_34">
+                          <Sequence DisplayName="Data Scraping" sap2010:WorkflowViewState.IdRef="Sequence_31">
+                            <ui:BrowserScope Browser="{x:Null}" SearchScope="{x:Null}" TimeoutMS="{x:Null}" UiBrowser="{x:Null}" BrowserType="Chrome" DisplayName="Attach Browser 'TNS Page'" sap2010:WorkflowViewState.IdRef="BrowserScope_3" InformativeScreenshot="a8dea2a15e5abe28981c46d1debefa2d" Selector="&lt;html app='chrome.exe' title='::::::::::: TNS :::::::::::' /&gt;">
+                              <ui:BrowserScope.Body>
+                                <ActivityAction x:TypeArguments="x:Object">
+                                  <ActivityAction.Argument>
+                                    <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                                  </ActivityAction.Argument>
+                                  <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_30">
+                                    <ui:ExtractData NextLinkSelector="{x:Null}" ContinueOnError="True" DataTable="[ExtractDataTable]" DelayBetweenPagesMS="300" DisplayName="Extract Structured Data 'TABLE  grid1'" ExtractMetadata="&lt;extract-table get_columns_name='1' get_empty_columns='1' /&gt;" sap2010:WorkflowViewState.IdRef="ExtractData_3" MaxNumberOfResults="100">
+                                      <ui:ExtractData.Target>
+                                        <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="c70a0462cb23ece6f35ac0bd3c14a208" Selector="&lt;webctrl id='businessView' tag='IFRAME' /&gt;&lt;webctrl id='grid1' tag='TABLE' /&gt;" WaitForReady="COMPLETE" />
+                                      </ui:ExtractData.Target>
+                                    </ui:ExtractData>
+                                  </Sequence>
+                                </ActivityAction>
+                              </ui:BrowserScope.Body>
+                            </ui:BrowserScope>
+                          </Sequence>
+                          <Sequence DisplayName="Create Array" sap2010:WorkflowViewState.IdRef="Sequence_32">
+                            <Assign sap2010:WorkflowViewState.IdRef="Assign_7">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[infoArray]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[new Dictionary(Of String, String)]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_76" Key="Container Number" Value="[ExtractDataTable.Rows(1).Item(1).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_77" Key="Available for Pickup" Value="[ExtractDataTable.Rows(1).Item(3).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_78" Key="Container Seq" Value="[ExtractDataTable.Rows(1).Item(4).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_79" Key="Trouble Transaction" Value="[ExtractDataTable.Rows(1).Item(7).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_80" Key="Appt Time" Value="[ExtractDataTable.Rows(1).Item(8).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_81" Key="Yard Location" Value="[ExtractDataTable.Rows(1).Item(9).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_82" Key="Hold Reason" Value="[ExtractDataTable.Rows(1).Item(10).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_83" Key="Customs Status" Value="[ExtractDataTable.Rows(1).Item(11).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_84" Key="Freight Status" Value="[ExtractDataTable.Rows(1).Item(12).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_85" Key="USDA Status" Value="[ExtractDataTable.Rows(1).Item(13).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_86" Key="Carrier Status" Value="[ExtractDataTable.Rows(1).Item(14).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_87" Key="Terminal Status" Value="[ExtractDataTable.Rows(1).Item(15).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_88" Key="Demurrage Due?" Value="[ExtractDataTable.Rows(1).Item(16).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_89" Key="Demurrage Amount" Value="[ExtractDataTable.Rows(1).Item(17).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_90" Key="Last Free Day" Value="[ExtractDataTable.Rows(1).Item(18).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_91" Key="Paid Through Date" Value="[ExtractDataTable.Rows(1).Item(19).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_92" Key="SSCO" Value="[ExtractDataTable.Rows(1).Item(20).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_93" Key="SCAC" Value="[ExtractDataTable.Rows(1).Item(21).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_94" Key="Container Type/Length/Height" Value="[ExtractDataTable.Rows(1).Item(22).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_95" Key="Miscellaneous Hold Reason" Value="[ExtractDataTable.Rows(1).Item(23).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_96" Key="Terminal Hold Reason" Value="[ExtractDataTable.Rows(1).Item(24).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_97" Key="trkrCd" Value="[ExtractDataTable.Rows(1).Item(25).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_98" Key="Customs Hold Reason" Value="[ExtractDataTable.Rows(1).Item(26).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_99" Key="Vessel" Value="[Vessels.ToList().ElementAt(index).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_100" Key="Voyage" Value="[Voyages.ToList().ElementAt(index).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_101" Key="WONumber" Value="[WorkOrders.ToList().ElementAt(index).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_102" Key="ReferenceNumber" Value="[ReferenceNumbers.ToList().ElementAt(index).ToString]" />
+                            <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_103" Key="BOLNumber" Value="[BOLNumbers.ToList().ElementAt(index).ToString]" />
+                          </Sequence>
+                          <Assign sap2010:WorkflowViewState.IdRef="Assign_8">
+                            <Assign.To>
+                              <OutArgument x:TypeArguments="x:String">[jsonString]</OutArgument>
+                            </Assign.To>
+                            <Assign.Value>
+                              <InArgument x:TypeArguments="x:String">[JsonConvert.SerializeObject(infoArray)]</InArgument>
+                            </Assign.Value>
+                          </Assign>
+                          <ui:PathExists DisplayName="Path Exists" Exists="[pathExists]" sap2010:WorkflowViewState.IdRef="PathExists_3" Path="./ContainerInformation/" PathType="Folder" />
+                          <If Condition="[pathExists]" sap2010:WorkflowViewState.IdRef="If_10">
+                            <If.Else>
+                              <ui:CreateDirectory ContinueOnError="{x:Null}" DisplayName="Create Directory" sap2010:WorkflowViewState.IdRef="CreateDirectory_3" Path="./ContainerInformation/" />
+                            </If.Else>
+                          </If>
+                          <ui:WriteTextFile DisplayName="Write Text File" FileName="[&quot;./ContainerInformation/&quot; + Containers.ToList().ElementAt(index).ToString + &quot;.json&quot;]" sap2010:WorkflowViewState.IdRef="WriteTextFile_3" Text="[jsonString]" />
+                          <p:PythonScope DisplayName="Python Scope" sap2010:WorkflowViewState.IdRef="PythonScope_2" Path="C:\Python36" TargetPlatform="x64">
+                            <p:PythonScope.Body>
+                              <ActivityAction x:TypeArguments="x:Object">
+                                <ActivityAction.Argument>
+                                  <DelegateInArgument x:TypeArguments="x:Object" Name="PythonEngineSessionProperty" />
+                                </ActivityAction.Argument>
+                                <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_33">
+                                  <p:LoadScript Code="{x:Null}" DisplayName="Load Python Script" sap2010:WorkflowViewState.IdRef="LoadScript_2" Result="[Script]" ScriptFile="convertToPost.py" />
+                                  <p:InvokeMethod Result="{x:Null}" DisplayName="Invoke Python Method" sap2010:WorkflowViewState.IdRef="InvokeMethod_2" Instance="[Script]" Name="main" Parameters="[{&quot;SeattleTerminal46&quot;, Containers.ToList().ElementAt(index).ToString}]" />
+                                </Sequence>
+                              </ActivityAction>
+                            </p:PythonScope.Body>
+                          </p:PythonScope>
+                        </Sequence>
+                      </If.Then>
                       <If.Else>
-                        <ui:CreateDirectory ContinueOnError="{x:Null}" DisplayName="Create Directory" sap2010:WorkflowViewState.IdRef="CreateDirectory_2" Path="./ContainerInformation/" />
+                        <ui:SendHotkey DelayBefore="{x:Null}" DelayBetweenKeys="{x:Null}" DelayMS="{x:Null}" Activate="True" ClickBeforeTyping="False" DisplayName="Send Hotkey" EmptyField="False" sap2010:WorkflowViewState.IdRef="SendHotkey_5" Key="esc" KeyModifiers="None" SendWindowMessages="False" SpecialKey="True">
+                          <ui:SendHotkey.Target>
+                            <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Selector="{x:Null}" TimeoutMS="{x:Null}" WaitForReady="INTERACTIVE" />
+                          </ui:SendHotkey.Target>
+                        </ui:SendHotkey>
                       </If.Else>
                     </If>
-                    <ui:WriteTextFile DisplayName="Write Text File" FileName="[&quot;./ContainerInformation/&quot; + Containers.ToList().ElementAt(index).ToString + &quot;.json&quot;]" sap2010:WorkflowViewState.IdRef="WriteTextFile_2" Text="[jsonString]" />
-                    <p:PythonScope DisplayName="Python Scope" sap2010:WorkflowViewState.IdRef="PythonScope_1" Path="C:\Python36" TargetPlatform="x64">
-                      <p:PythonScope.Body>
-                        <ActivityAction x:TypeArguments="x:Object">
-                          <ActivityAction.Argument>
-                            <DelegateInArgument x:TypeArguments="x:Object" Name="PythonEngineSessionProperty" />
-                          </ActivityAction.Argument>
-                          <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_29">
-                            <p:LoadScript Code="{x:Null}" DisplayName="Load Python Script" sap2010:WorkflowViewState.IdRef="LoadScript_1" Result="[Script]" ScriptFile="convertToPost.py" />
-                            <p:InvokeMethod Result="{x:Null}" DisplayName="Invoke Python Method" sap2010:WorkflowViewState.IdRef="InvokeMethod_1" Instance="[Script]" Name="main" Parameters="[{Terminals.ToList().ElementAt(index).ToString, Containers.ToList().ElementAt(index).ToString}]" />
-                          </Sequence>
-                        </ActivityAction>
-                      </p:PythonScope.Body>
-                    </p:PythonScope>
-                    <Assign sap2010:WorkflowViewState.IdRef="Assign_6">
+                    <Assign sap2010:WorkflowViewState.IdRef="Assign_9">
                       <Assign.To>
                         <OutArgument x:TypeArguments="x:Int32">[index]</OutArgument>
                       </Assign.To>
@@ -294,25 +313,27 @@
         </ActivityAction>
       </ui:OpenBrowser.Body>
     </ui:OpenBrowser>
-    <sads:DebugSymbol.Symbol>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</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>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</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
       <sap2010:ViewStateData Id="ExcelReadColumn_1" sap:VirtualizedContainerService.HintSize="314,59" />
       <sap2010:ViewStateData Id="ExcelReadColumn_2" sap:VirtualizedContainerService.HintSize="314,59" />
       <sap2010:ViewStateData Id="ExcelReadColumn_3" sap:VirtualizedContainerService.HintSize="314,59" />
-      <sap2010:ViewStateData Id="ExcelReadColumn_4" sap:VirtualizedContainerService.HintSize="314,59" />
-      <sap2010:ViewStateData Id="Sequence_23" sap:VirtualizedContainerService.HintSize="336,480">
+      <sap2010:ViewStateData Id="ExcelReadColumn_5" sap:VirtualizedContainerService.HintSize="314,59" />
+      <sap2010:ViewStateData Id="ExcelReadColumn_6" sap:VirtualizedContainerService.HintSize="314,59" />
+      <sap2010:ViewStateData Id="ExcelReadColumn_7" sap:VirtualizedContainerService.HintSize="314,59" />
+      <sap2010:ViewStateData Id="Sequence_23" sap:VirtualizedContainerService.HintSize="336,678">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="ExcelApplicationScope_1" sap:VirtualizedContainerService.HintSize="414,589">
+      <sap2010:ViewStateData Id="ExcelApplicationScope_1" sap:VirtualizedContainerService.HintSize="200,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
@@ -320,7 +341,7 @@
       <sap2010:ViewStateData Id="TypeInto_21" sap:VirtualizedContainerService.HintSize="314,134" />
       <sap2010:ViewStateData Id="TypeInto_22" sap:VirtualizedContainerService.HintSize="314,134" />
       <sap2010:ViewStateData Id="Click_26" sap:VirtualizedContainerService.HintSize="314,106" />
-      <sap2010:ViewStateData Id="Sequence_16" sap:VirtualizedContainerService.HintSize="502,51">
+      <sap2010:ViewStateData Id="Sequence_16" sap:VirtualizedContainerService.HintSize="641,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -328,8 +349,8 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Assign_5" sap:VirtualizedContainerService.HintSize="502,60" />
-      <sap2010:ViewStateData Id="TypeInto_26" sap:VirtualizedContainerService.HintSize="464,51">
+      <sap2010:ViewStateData Id="Assign_5" sap:VirtualizedContainerService.HintSize="641,60" />
+      <sap2010:ViewStateData Id="TypeInto_26" sap:VirtualizedContainerService.HintSize="603,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -337,7 +358,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Click_33" sap:VirtualizedContainerService.HintSize="464,51">
+      <sap2010:ViewStateData Id="Click_33" sap:VirtualizedContainerService.HintSize="603,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -345,16 +366,17 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="ExtractData_2" sap:VirtualizedContainerService.HintSize="314,106" />
-      <sap2010:ViewStateData Id="Sequence_25" sap:VirtualizedContainerService.HintSize="336,230">
+      <sap2010:ViewStateData Id="UiElementExists_1" sap:VirtualizedContainerService.HintSize="603,106" />
+      <sap2010:ViewStateData Id="ExtractData_3" sap:VirtualizedContainerService.HintSize="314,106" />
+      <sap2010:ViewStateData Id="Sequence_30" sap:VirtualizedContainerService.HintSize="336,230">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="BrowserScope_2" sap:VirtualizedContainerService.HintSize="414,376" />
-      <sap2010:ViewStateData Id="Sequence_26" sap:VirtualizedContainerService.HintSize="464,51">
+      <sap2010:ViewStateData Id="BrowserScope_3" sap:VirtualizedContainerService.HintSize="414,376" />
+      <sap2010:ViewStateData Id="Sequence_31" sap:VirtualizedContainerService.HintSize="242,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -362,33 +384,36 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Assign_3" sap:VirtualizedContainerService.HintSize="378,60" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_48" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_49" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_50" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_51" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_52" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_53" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_54" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_55" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_56" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_57" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_58" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_59" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_60" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_61" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_62" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_63" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_64" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_65" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_66" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_67" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_68" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_69" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_70" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_71" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="AddToDictionary`2_72" sap:VirtualizedContainerService.HintSize="378,138" />
-      <sap2010:ViewStateData Id="Sequence_27" sap:VirtualizedContainerService.HintSize="464,51">
+      <sap2010:ViewStateData Id="Assign_7" sap:VirtualizedContainerService.HintSize="378,60" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_76" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_77" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_78" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_79" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_80" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_81" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_82" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_83" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_84" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_85" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_86" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_87" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_88" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_89" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_90" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_91" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_92" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_93" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_94" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_95" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_96" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_97" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_98" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_99" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_100" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_101" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_102" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="AddToDictionary`2_103" sap:VirtualizedContainerService.HintSize="378,138" />
+      <sap2010:ViewStateData Id="Sequence_32" sap:VirtualizedContainerService.HintSize="242,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -396,31 +421,8 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Assign_4" sap:VirtualizedContainerService.HintSize="464,60" />
-      <sap2010:ViewStateData Id="PathExists_2" sap:VirtualizedContainerService.HintSize="464,89" />
-      <sap2010:ViewStateData Id="CreateDirectory_2" sap:VirtualizedContainerService.HintSize="200,22" />
-      <sap2010:ViewStateData Id="If_8" sap:VirtualizedContainerService.HintSize="464,207" />
-      <sap2010:ViewStateData Id="WriteTextFile_2" sap:VirtualizedContainerService.HintSize="464,87" />
-      <sap2010:ViewStateData Id="LoadScript_1" sap:VirtualizedContainerService.HintSize="314,59" />
-      <sap2010:ViewStateData Id="InvokeMethod_1" sap:VirtualizedContainerService.HintSize="314,22" />
-      <sap2010:ViewStateData Id="Sequence_29" sap:VirtualizedContainerService.HintSize="336,245">
-        <sap:WorkflowViewStateService.ViewState>
-          <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-          </scg:Dictionary>
-        </sap:WorkflowViewStateService.ViewState>
-      </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="PythonScope_1" sap:VirtualizedContainerService.HintSize="464,281" />
-      <sap2010:ViewStateData Id="Assign_6" sap:VirtualizedContainerService.HintSize="464,60" />
-      <sap2010:ViewStateData Id="Sequence_28" sap:VirtualizedContainerService.HintSize="486,1472">
-        <sap:WorkflowViewStateService.ViewState>
-          <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-          </scg:Dictionary>
-        </sap:WorkflowViewStateService.ViewState>
-      </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="502,1605" />
-      <sap2010:ViewStateData Id="Click_32" sap:VirtualizedContainerService.HintSize="502,51">
+      <sap2010:ViewStateData Id="Assign_8" sap:VirtualizedContainerService.HintSize="242,60" />
+      <sap2010:ViewStateData Id="PathExists_3" sap:VirtualizedContainerService.HintSize="242,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -428,16 +430,8 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="CloseTab_5" sap:VirtualizedContainerService.HintSize="502,22" />
-      <sap2010:ViewStateData Id="Sequence_17" sap:VirtualizedContainerService.HintSize="524,2073">
-        <sap:WorkflowViewStateService.ViewState>
-          <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-            <x:Boolean x:Key="IsPinned">False</x:Boolean>
-          </scg:Dictionary>
-        </sap:WorkflowViewStateService.ViewState>
-      </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="OpenBrowser_7" sap:VirtualizedContainerService.HintSize="538,2172">
+      <sap2010:ViewStateData Id="CreateDirectory_3" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="If_10" sap:VirtualizedContainerService.HintSize="242,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -445,14 +439,82 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="436,804">
+      <sap2010:ViewStateData Id="WriteTextFile_3" sap:VirtualizedContainerService.HintSize="242,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LoadScript_2" sap:VirtualizedContainerService.HintSize="314,59" />
+      <sap2010:ViewStateData Id="InvokeMethod_2" sap:VirtualizedContainerService.HintSize="314,22" />
+      <sap2010:ViewStateData Id="Sequence_33" sap:VirtualizedContainerService.HintSize="336,245">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Main_1" sap:VirtualizedContainerService.HintSize="476,924" />
+      <sap2010:ViewStateData Id="PythonScope_2" sap:VirtualizedContainerService.HintSize="242,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_34" sap:VirtualizedContainerService.HintSize="264,730">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendHotkey_5" sap:VirtualizedContainerService.HintSize="314,116" />
+      <sap2010:ViewStateData Id="If_9" sap:VirtualizedContainerService.HintSize="603,877" />
+      <sap2010:ViewStateData Id="Assign_9" sap:VirtualizedContainerService.HintSize="603,60" />
+      <sap2010:ViewStateData Id="Sequence_28" sap:VirtualizedContainerService.HintSize="625,1429">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="641,1562" />
+      <sap2010:ViewStateData Id="Click_32" sap:VirtualizedContainerService.HintSize="641,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="CloseTab_5" sap:VirtualizedContainerService.HintSize="641,22" />
+      <sap2010:ViewStateData Id="Sequence_17" sap:VirtualizedContainerService.HintSize="663,2030">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="OpenBrowser_7" sap:VirtualizedContainerService.HintSize="677,2129">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="222,266">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Main_1" sap:VirtualizedContainerService.HintSize="262,386" />
     </sap2010:ViewStateManager>
   </sap2010:WorkflowViewState.ViewStateManager>
 </Activity>
