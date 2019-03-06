@@ -5,6 +5,7 @@ import copy
 import requests
 import datetime
 import glob
+import pickle
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
@@ -86,27 +87,37 @@ def EverportPost(step):
         postJson["eventCode"] = "I"
         postJson["eventName"] = "INGATE"
     postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1:
+        return
     postJson["unitId"] = data["Container"]
     postJson["carrierName"] = data["Trucker"]
     postJson["carrierCode"] = data["Carrier"]
     postJson["sealNumber"] = data["Seal"]
+    postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "EVERPORT LA RPA"
+    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["vessel"] = data["Vessel"]
+    postJson["voyageNumber"] = data["Voyage"]
     postJson["longitude"] = -118.24
     postJson["latitude"] = 33.76
     postJson["address"] = "389 Terminal Island Way Terminal Island, CA 90731"
     postJson["country"] = "US"
     postJson["state"] = "CA"
     postJson["city"] = "Los Angeles"
-    #TODO: Vessel/Voyage numbers
-    #TODO: Reference Numbers/Work Order Numbers
     print(json.dumps(postJson))
     #TODO: config file for post urls
-    #headers = {'content-type':'application/json'}
-    #r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    headers = {'content-type':'application/json'}
+    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     return
 
 def main(terminal, container):
-    fileList = glob.glob("ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+
+    fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\EvergreenPort\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+    print(fileList)
+    with open(os.path.join("C:\\Python36\\",container+"Step98.txt"), "w") as fp:
+        fp.write(str(os.getcwd()))
     fileList = [f for f in fileList if container in f] #set of steps for this number
     fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
     for step in fileList:
