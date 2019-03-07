@@ -5,7 +5,6 @@ import copy
 import requests
 import datetime
 import glob
-import pickle
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
@@ -72,6 +71,8 @@ class baseInfo:
     }
 
 def EverportPost(step):
+    with open(step+'.txt', 'w') as f:
+        f.write("%s\n" % step)
     with open(step) as jsonData:
         data = json.load(jsonData)
     if(data["Move Type"] not in ["Discharge", "Load", "Export In"]):
@@ -87,7 +88,7 @@ def EverportPost(step):
         postJson["eventCode"] = "I"
         postJson["eventName"] = "INGATE"
     postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-    if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1:
+    if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1: #it is the current year
         return
     postJson["unitId"] = data["Container"]
     postJson["carrierName"] = data["Trucker"]
@@ -107,22 +108,22 @@ def EverportPost(step):
     postJson["state"] = "CA"
     postJson["city"] = "Los Angeles"
     print(json.dumps(postJson))
+    with open(step+'.txt', 'w') as f:
+        f.write(json.dumps(postJson))
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     return
 
-def main(terminal, container):
-
-    fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\EvergreenPort\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
-    print(fileList)
-    with open(os.path.join("C:\\Python36\\",container+"Step98.txt"), "w") as fp:
-        fp.write(str(os.getcwd()))
-    fileList = [f for f in fileList if container in f] #set of steps for this number
-    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
-    for step in fileList:
-        EverportPost(step)
-    return
+def main(containerList):
+    for container in containerList:
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\EvergreenPort\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        if (not fileList):
+            continue
+        fileList = [f for f in fileList if container in f] #set of steps for this number
+        fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+        for step in fileList:
+            EverportPost(step)
 
 if __name__=="__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1])
