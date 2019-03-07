@@ -77,7 +77,7 @@ def getSize(size):
     if(size.find("53")):
         return 53
 
-def Seattle46Post(terminal, container, postJson, eventCode, eventName):
+def Seattle46Post(container, postJson, eventCode, eventName):
     postJson["eventName"] = eventName
     postJson["eventCode"] = eventCode
     postJson["signedBy"] = "Gandalf"
@@ -95,7 +95,9 @@ def Seattle46Post(terminal, container, postJson, eventCode, eventName):
     print(r)
 
 
-def Seattle46(terminal, container):
+def Seattle46(container):
+    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+".json") == False):
+        return
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+".json") as jsonData:
         data = json.load(jsonData)
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
@@ -111,28 +113,27 @@ def Seattle46(terminal, container):
     postJson["billOfLadingNumber"] = data["BOLNumber"]
 
     if(data["Available for Pickup"].find("Yes") != -1):
-        Seattle46Post(terminal, container, postJson, "AV", "Available For Pickup")
+        Seattle46Post(container, postJson, "AV", "Available For Pickup")
     if(data["Yard Location"].find("Out-Gated") != -1):
         postJson["eventTime"] = datetime.datetime.strptime(data["Yard Location"].split('(')[1].split(')')[0] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-        Seattle46Post(terminal, container, postJson, "OA", "Outgate")
+        Seattle46Post(container, postJson, "OA", "Outgate")
     elif(data["Yard Location"].find("On Ship")  != -1):
-        Seattle46Post(terminal, container, postJson, "IT", "In Transit (Ocean)")
+        Seattle46Post(container, postJson, "IT", "In Transit (Ocean)")
     elif(data["Yard Location"].find("Delivered") != -1 and data["Appt Time"].find("~") != -1):
-        Seattle46Post(terminal, container, postJson, "AFD", "Arrived For Delivery")
+        Seattle46Post(container, postJson, "AFD", "Arrived For Delivery")
     if(data["Hold Reason"].find("Released") != -1):
-        Seattle46Post(terminal, container, postJson, "CH", "Customs Hold")
+        Seattle46Post(container, postJson, "CH", "Customs Hold")
     if(data["Customs Status"].find("Released") != -1):
-        Seattle46Post(terminal, container, postJson, "CT", "Customs Release")
+        Seattle46Post(container, postJson, "CT", "Customs Release")
     if(data["Freight Status"].find("Released") != -1):
-        Seattle46Post(terminal, container, postJson, "FS", "Freight Release")
+        Seattle46Post(container, postJson, "FS", "Freight Release")
     if(data["Carrier Status"].find("Released") != -1):
-        Seattle46Post(terminal, container, postJson, "CR", "Carrier Release")
+        Seattle46Post(container, postJson, "CR", "Carrier Release")
 
 
-
-
-def main(terminal, container):
-    Seattle46(terminal, container)
+def main(containerList):
+    for container in containerList:
+        Seattle46(container)
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1])

@@ -108,6 +108,7 @@
           <Sequence sap2010:WorkflowViewState.IdRef="Sequence_17">
             <Sequence.Variables>
               <Variable x:TypeArguments="x:Int32" Name="index" />
+              <Variable x:TypeArguments="p:PythonObject" Name="Script" />
             </Sequence.Variables>
             <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_16">
               <Sequence.Variables>
@@ -156,7 +157,6 @@
                   </ActivityAction.Argument>
                   <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_28">
                     <Sequence.Variables>
-                      <Variable x:TypeArguments="p:PythonObject" Name="Script" />
                       <Variable x:TypeArguments="sd:DataTable" Default="[New System.Data.DataTable]" Name="ExtractDataTable" />
                     </Sequence.Variables>
                     <ui:TypeInto DelayBefore="{x:Null}" DelayBetweenKeys="{x:Null}" DelayMS="{x:Null}" Activate="True" ClickBeforeTyping="False" DisplayName="Type Into 'INPUT  entityNumber'" EmptyField="True" sap2010:WorkflowViewState.IdRef="TypeInto_26" SendWindowMessages="False" SimulateType="False" Text="[item.ToString]">
@@ -258,19 +258,6 @@
                             </If.Else>
                           </If>
                           <ui:WriteTextFile DisplayName="Write Text File" FileName="[&quot;./ContainerInformation/&quot; + Containers.ToList().ElementAt(index).ToString + &quot;.json&quot;]" sap2010:WorkflowViewState.IdRef="WriteTextFile_3" Text="[jsonString]" />
-                          <p:PythonScope DisplayName="Python Scope" sap2010:WorkflowViewState.IdRef="PythonScope_2" Path="C:\Python36" TargetPlatform="x64">
-                            <p:PythonScope.Body>
-                              <ActivityAction x:TypeArguments="x:Object">
-                                <ActivityAction.Argument>
-                                  <DelegateInArgument x:TypeArguments="x:Object" Name="PythonEngineSessionProperty" />
-                                </ActivityAction.Argument>
-                                <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_33">
-                                  <p:LoadScript Code="{x:Null}" DisplayName="Load Python Script" sap2010:WorkflowViewState.IdRef="LoadScript_2" Result="[Script]" ScriptFile="convertToPost.py" />
-                                  <p:InvokeMethod Result="{x:Null}" DisplayName="Invoke Python Method" sap2010:WorkflowViewState.IdRef="InvokeMethod_2" Instance="[Script]" Name="main" Parameters="[{&quot;SeattleTerminal46&quot;, Containers.ToList().ElementAt(index).ToString}]" />
-                                </Sequence>
-                              </ActivityAction>
-                            </p:PythonScope.Body>
-                          </p:PythonScope>
                         </Sequence>
                       </If.Then>
                       <If.Else>
@@ -293,6 +280,19 @@
                 </ActivityAction>
               </ui:ForEach.Body>
             </ui:ForEach>
+            <p:PythonScope DisplayName="Python Scope" sap2010:WorkflowViewState.IdRef="PythonScope_2" Path="C:\Python36" TargetPlatform="x64">
+              <p:PythonScope.Body>
+                <ActivityAction x:TypeArguments="x:Object">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="x:Object" Name="PythonEngineSessionProperty" />
+                  </ActivityAction.Argument>
+                  <Sequence DisplayName="Do" sap2010:WorkflowViewState.IdRef="Sequence_33">
+                    <p:LoadScript Code="{x:Null}" DisplayName="Load Python Script" sap2010:WorkflowViewState.IdRef="LoadScript_2" Result="[Script]" ScriptFile="convertToPost.py" />
+                    <p:InvokeMethod Result="{x:Null}" DisplayName="Invoke Python Method" sap2010:WorkflowViewState.IdRef="InvokeMethod_2" Instance="[Script]" Name="main" Parameters="[{Containers.Cast(of String)().ToArray()}]" />
+                  </Sequence>
+                </ActivityAction>
+              </p:PythonScope.Body>
+            </p:PythonScope>
             <ui:Click DelayBefore="{x:Null}" DelayMS="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click 'IMG'" sap2010:WorkflowViewState.IdRef="Click_32" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="False">
               <ui:Click.CursorPosition>
                 <ui:CursorPosition Position="Center">
@@ -313,7 +313,7 @@
         </ActivityAction>
       </ui:OpenBrowser.Body>
     </ui:OpenBrowser>
-    <sads:DebugSymbol.Symbol>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</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d21DOlxVc2Vyc1xwdmFuYXVzZGVsblxEcm9wYm94IChCbHVtZSBHbG9iYWwpXERvY3VtZW50c1xVaVBhdGhcUG9ydFRlcm1pbmFsU2NyYXBpbmdcU2VhdHRsZVRlcm1pbmFsNDZcTWFpbi54YW1s3QFHA70CDgIBAVM1UzwCAQJVBWUgAwHwAWYFuwIWAgEDVaABVasBAwGQAlsLYhYDAfEBZr8BZuQBAwHvAWwLuAIWAgEEXA1crAEDAYsCXQ1dqQEDAYYCXg1eqQEDAYECXw1frAEDAfwBYA1gsgEDAfcBYQ1hrAEDAfIBcQ2PARgDAeIBkAENlwEWAwHeAZgBDZoCGgIBFpsCDacCHQIBCqgCDbYCGAIBCLcCDbcCewIBBVylAVypAQMBjwJcdlyEAQMBjQJcjwFclwEDAYwCXaIBXaYBAwGKAl12XYEBAwGIAl2MAV2UAQMBhwJeogFepgEDAYUCXnZegQEDAYMCXowBXpQBAwGCAl+lAV+pAQMBgAJfdl+EAQMB/gFfjwFflwEDAf0BYKsBYK8BAwH7AWB2YIoBAwH5AWCVAWCdAQMB+AFhpQFhqQEDAfYBYXZhhAEDAfQBYY8BYZcBAwHzAXM+c0UDAeQBdD50RgMB4wF2D3odAwHrAXsPfx0DAecBgAEPjgEaAwHlAZUBN5UBOAMB4QGSATiSAT8DAd8BmAGYAZgBrQEDAd0BngETlwIeAgEXmwJsmwJ5AgEVoQITpAIeAgELtAKgAbQCzAECAQm3AiK3AjMCAQZ4ogF4zQEDAe4BdqkCdr8CAwHsAX2iAX3OAQMB6gF7qgJ7wAIDAegBjAGiAYwBzgEDAeYBoAFIoAFlAgEYogEVpgEjAwHZAacBFbUBIAMB1wG2ARW6ASoDAdIBuwEVjgIaAgEejwIVlgIeAgEZogIVogK1AQIBEaMCFaMC5QECAQykAagBpAHZAQMB3AGiAbUCogHGAgMB2gGzAagBswGkAwMB2AG4AZMBuAGhAgMB1gG4AawCuAGyAgMB1QG2AVK2AWUDAdMBuwEjuwE2AgEfvQEZhQIkAgEjiAIZjAIpAgEhlAI/lAJJAgEckQJAkQJHAgEaogKgAaICsgECARSiAooBogKUAQIBEqMCtgGjAuIBAgEQowKUAaMCngECAQ6jAqQBowKqAQIBDb4BG88BJgMBxgHQARv1ASYCATX2ARv9ASQCATH+ARv+AbwBAgEt/wEbgwIgAgEohAIbhAKIAgIBJIgC+AGIAv0BAgEivwEdzgEvAwHHAdEBHdgBJgMBwgHZAR3ZAZUCAwG9AdoBHdoBmQIDAbgB2wEd2wGSAgMBswHcAR3cAZgCAwGuAd0BHd0BjgIDAakB3gEd3gGSAgMBpAHfAR3fAZECAwGfAeABHeABlAIDAZoB4QEd4QGUAgMBlQHiAR3iAZECAwGQAeMBHeMBlAIDAYsB5AEd5AGVAgMBhgHlAR3lAZQCAwGBAeYBHeYBlgICAXznAR3nAZMCAgF36AEd6AGXAgIBcukBHekBigICAW3qAR3qAYoCAgFo6wEd6wGiAgIBY+wBHewBnwICAV7tAR3tAZoCAgFZ7gEd7gGMAgIBVO8BHe8BmQICAU/wAR3wAYwCAgFK8QEd8QGNAgIBRfIBHfIBkgICAUDzAR3zAZ8CAgE79AEd9AGTAgIBNvsBRvsBbgIBNPgBR/gBUwIBMv4BS/4BWQIBL/4BjgH+AacBAgEu/wEp/wE3AgEpgQIfgQLCAQIBK4QC9wGEAoUCAgEmhAJUhAK/AQIBJb8BsgK/AfcCAwHRAcUBI8sBLgMByAHWAWLWAYUBAwHFAdMBY9MBbgMBwwHZAeUB2QGSAgMBwQHZAWPZAXADAb8B2QHMAdkB3gEDAb4B2gHpAdoBlgIDAbwB2gFj2gFwAwG6AdoBzAHaAeIBAwG5AdsB4gHbAY8CAwG3AdsBY9sBcAMBtQHbAcwB2wHbAQMBtAHcAegB3AGVAgMBsgHcAWPcAXADAbAB3AHMAdwB4QEDAa8B3QHeAd0BiwIDAa0B3QFj3QFwAwGrAd0BzAHdAdcBAwGqAd4B4gHeAY8CAwGoAd4BY94BcAMBpgHeAcwB3gHbAQMBpQHfAeAB3wGOAgMBowHfAWPfAXADAaEB3wHMAd8B2QEDAaAB4AHjAeABkQIDAZ4B4AFj4AFwAwGcAeABzAHgAdwBAwGbAeEB4wHhAZECAwGZAeEBY+EBcAMBlwHhAcwB4QHcAQMBlgHiAeAB4gGOAgMBlAHiAWPiAXADAZIB4gHMAeIB2QEDAZEB4wHjAeMBkQIDAY8B4wFj4wFwAwGNAeMBzAHjAdwBAwGMAeQB5AHkAZICAwGKAeQBY+QBcAMBiAHkAcwB5AHdAQMBhwHlAeMB5QGRAgMBhQHlAWPlAXADAYMB5QHMAeUB3AEDAYIB5gHlAeYBkwIDAYAB5gFj5gFwAgF+5gHMAeYB3gECAX3nAeIB5wGQAgIBe+cBY+cBcAIBeecBzAHnAdsBAgF46AHmAegBlAICAXboAWPoAXACAXToAcwB6AHfAQIBc+kB2QHpAYcCAgFx6QFj6QFwAgFv6QHMAekB0gECAW7qAdkB6gGHAgIBbOoBY+oBcAIBauoBzAHqAdIBAgFp6wHxAesBnwICAWfrAWPrAXACAWXrAcwB6wHqAQIBZOwB7gHsAZwCAgFi7AFj7AFwAgFg7AHMAewB5wECAV/tAekB7QGXAgIBXe0BY+0BcAIBW+0BzAHtAeIBAgFa7gHbAe4BiQICAVjuAWPuAXACAVbuAcwB7gHUAQIBVe8B6AHvAZYCAgFT7wFj7wFwAgFR7wHMAe8B4QECAVDwAdsB8AGJAgIBTvABY/ABcAIBTPABzAHwAdQBAgFL8QHcAfEBigICAUnxAWPxAXACAUfxAc0B8QHVAQIBRvIB3gHyAY8CAgFE8gFj8gFwAgFC8gHNAfIB1wECAUHzAeUB8wGcAgIBP/MBY/MBcAIBPfMBzQHzAd4BAgE89AHfAfQBkAICATr0AWP0AXACATj0Ac0B9AHYAQIBN4ECpgGBAr8BAgEsxgElygE2AwHJAcYB7gLGAfMCAwHQAcgBuAHIAZICAwHPAcYBmwHGAaABAwHOAcYBYcYBZwMBzQHGAXLGAYYBAwHLAcYB5gHGAaoCAwHKAQ==</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
@@ -447,6 +447,24 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_34" sap:VirtualizedContainerService.HintSize="264,639">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendHotkey_5" sap:VirtualizedContainerService.HintSize="314,116" />
+      <sap2010:ViewStateData Id="If_9" sap:VirtualizedContainerService.HintSize="603,787" />
+      <sap2010:ViewStateData Id="Assign_9" sap:VirtualizedContainerService.HintSize="603,60" />
+      <sap2010:ViewStateData Id="Sequence_28" sap:VirtualizedContainerService.HintSize="625,1339">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="641,1473" />
       <sap2010:ViewStateData Id="LoadScript_2" sap:VirtualizedContainerService.HintSize="314,59" />
       <sap2010:ViewStateData Id="InvokeMethod_2" sap:VirtualizedContainerService.HintSize="314,22" />
       <sap2010:ViewStateData Id="Sequence_33" sap:VirtualizedContainerService.HintSize="336,245">
@@ -456,7 +474,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="PythonScope_2" sap:VirtualizedContainerService.HintSize="242,51">
+      <sap2010:ViewStateData Id="PythonScope_2" sap:VirtualizedContainerService.HintSize="641,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -464,24 +482,6 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_34" sap:VirtualizedContainerService.HintSize="264,730">
-        <sap:WorkflowViewStateService.ViewState>
-          <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-          </scg:Dictionary>
-        </sap:WorkflowViewStateService.ViewState>
-      </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="SendHotkey_5" sap:VirtualizedContainerService.HintSize="314,116" />
-      <sap2010:ViewStateData Id="If_9" sap:VirtualizedContainerService.HintSize="603,877" />
-      <sap2010:ViewStateData Id="Assign_9" sap:VirtualizedContainerService.HintSize="603,60" />
-      <sap2010:ViewStateData Id="Sequence_28" sap:VirtualizedContainerService.HintSize="625,1429">
-        <sap:WorkflowViewStateService.ViewState>
-          <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-          </scg:Dictionary>
-        </sap:WorkflowViewStateService.ViewState>
-      </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="ForEach`1_2" sap:VirtualizedContainerService.HintSize="641,1562" />
       <sap2010:ViewStateData Id="Click_32" sap:VirtualizedContainerService.HintSize="641,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -491,7 +491,7 @@
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
       <sap2010:ViewStateData Id="CloseTab_5" sap:VirtualizedContainerService.HintSize="641,22" />
-      <sap2010:ViewStateData Id="Sequence_17" sap:VirtualizedContainerService.HintSize="663,2030">
+      <sap2010:ViewStateData Id="Sequence_17" sap:VirtualizedContainerService.HintSize="663,2032">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -514,7 +514,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Main_1" sap:VirtualizedContainerService.HintSize="262,386" />
+      <sap2010:ViewStateData Id="Main_1" sap:VirtualizedContainerService.HintSize="262,346" />
     </sap2010:ViewStateManager>
   </sap2010:WorkflowViewState.ViewStateManager>
 </Activity>
