@@ -71,22 +71,27 @@ class baseInfo:
     }
 
 def EverportPost(step):
-    with open(step+'.txt', 'w') as f:
-        f.write("%s\n" % step)
     with open(step) as jsonData:
         data = json.load(jsonData)
-    if(data["Move Type"] not in ["Discharge", "Load", "Export In"]):
+    if(data["Move Type"] not in ["Discharge", "Load", "Export In", "Empty In", "Empty Out"]):
         return
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     if(data["Move Type"] == "Discharge"):
         postJson["eventCode"] = "APL"
         postJson["eventName"] = "Available For Pickup"
-    if(data["Move Type"] == "Load"):
+    elif(data["Move Type"] == "Load"):
         postJson["eventCode"] = "AE"
         postJson["eventName"] = "Loaded On Vessel"
-    if(data["Move Type"] == "Export In"):
+    elif(data["Move Type"] == "Export In"):
         postJson["eventCode"] = "I"
         postJson["eventName"] = "INGATE"
+    elif(data["Move Type"] == "Empty In"):
+        postJson["eventCode"] = "I"
+        postJson["eventName"] = "INGATE"
+    elif(data["Move Type"] == "Empty Out"):
+        postJson["eventCode"] = "EE"
+        postJson["eventCode"] = "Empty Equipment Dispatched"
+    
     postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
     if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1: #it is the current year
         return
@@ -109,8 +114,6 @@ def EverportPost(step):
     postJson["city"] = "Los Angeles"
     postJson["terminalCode"] = "Everport LA"
     print(json.dumps(postJson))
-    with open(step+'.txt', 'w') as f:
-        f.write(json.dumps(postJson))
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)

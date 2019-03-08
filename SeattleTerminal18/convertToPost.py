@@ -94,6 +94,8 @@ def Seattle18Post(container):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") as jsonData:
         data = json.load(jsonData)
+    if(data["Event"] == ""):
+        return
     postJson["unitId"] = container
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
