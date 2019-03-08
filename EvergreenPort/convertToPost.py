@@ -107,6 +107,7 @@ def EverportPost(step):
     postJson["country"] = "US"
     postJson["state"] = "CA"
     postJson["city"] = "Los Angeles"
+    postJson["terminalCode"] = "Everport LA"
     print(json.dumps(postJson))
     with open(step+'.txt', 'w') as f:
         f.write(json.dumps(postJson))

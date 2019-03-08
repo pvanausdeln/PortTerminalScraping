@@ -111,6 +111,7 @@ def Seattle46(container):
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["terminalCode"] = "Seattle Terminal 46"
 
     if(data["Available for Pickup"].find("Yes") != -1):
         Seattle46Post(container, postJson, "AV", "Available For Pickup")
