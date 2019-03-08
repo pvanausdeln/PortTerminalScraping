@@ -69,6 +69,24 @@ class baseInfo:
     "workOrderNumber": None
     }
 
+def getEvent(data, postJson):
+    if(data["Event"] == "LOAD"):
+        postJson["eventCode"] = "AE"
+        postJson["eventName"] = "Loaded on Vessel"
+    elif(data["Event"] == "UNLOAD"):
+        postJson["eventCode"] = "UV"
+        postJson["eventName"] = "Unloaded on Vessel"
+    elif(data["Event"] == "FULL IN" or data["Event"] == "EMPTY IN"):
+        postJson["eventCode"] = "I"
+        postJson["eventName"] = "INGATE"
+    elif(data["Event"] == "FULL OUT"):
+        postJson["eventCode"] = "OA"
+        postJson["eventNAme"] = "OUTGATE"
+    elif(data["Event"] == "EMPTY OUT"):
+        postJson["eventCode"] = "EE"
+        postJson["eventCode"] = "Empty Equipment Dispatched"
+    return postJson
+
 def Seattle18Post(container):
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") == False): #is there a Vessel event
         return
@@ -76,7 +94,7 @@ def Seattle18Post(container):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") as jsonData:
         data = json.load(jsonData)
-    postJson["unitId"] = data["Container Number"]
+    postJson["unitId"] = container
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
     postJson["workOrderNumber"] = data["WONumber"]
@@ -99,28 +117,19 @@ def Seattle18Post(container):
     loadData = None
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Load.json") == True): #is there a Load event
         loadPostJson = copy.deepcopy(postJson)
-        with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") as loadJsonData:
+        with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Load.json") as loadJsonData:
             loadData = json.load(loadJsonData)
 
     postJson["eventTime"] = datetime.datetime.strptime(data["Time"][:-3] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-    if(data["Event"] == "LOAD"):
-        postJson["eventCode"] = "AE"
-        postJson["eventName"] = "Loaded on Vessel"
-    elif(data["Event"] == "UNLOAD"):
-        postJson["eventCode"] = "UV"
-        postJson["eventName"] = "Unloaded on Vessel"
+    postJson = getEvent(data, postJson)
+    print(json.dumps(postJson))
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
 
     if(loadPostJson != None):
         loadPostJson["eventTime"] = datetime.datetime.strptime(loadData["Time"][:-3] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-        if(loadData["Event"] == "LOAD"):
-            loadPostJson["eventCode"] = "AE"
-            loadPostJson["eventName"] = "Loaded on Vessel"
-        elif(data["Event"] == "UNLOAD"):
-            loadPostJson["eventCode"] = "UV"
-            loadPostJson["eventName"] = "Unloaded on Vessel"
+        loadPostJson = getEvent(loadData, loadPostJson)
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(loadPostJson), headers = headers, verify = False)
         print(r)
