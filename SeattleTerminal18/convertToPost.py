@@ -74,19 +74,53 @@ def Seattle18Post(container):
         return
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-    #TODO: Fill info that is same for Vessel and Load events
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal1\\ContainerInformation\\"+container+"Vessel.json") as jsonData:
+        data = json.load(jsonData)
+    postJson["unitId"] = data["Container Number"]
+    postJson["vessel"] = data["Vessel"]
+    postJson["voyageNumber"] = data["Voyage"]
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["reportSource"] = "OceanEvent"
+    postJson["resolvedEventSource"] = "Seattle T18 RPA"
+    postJson["city"] = "Seattle" #mandatory
+    postJson["country"] = "US" #mandatory
+    postJson["state"] = "WA"
+    postJson["location"] = "1050 SW Spokane St, Seattle, WA 98134"
+    postJson["latitude"] = 47.57
+    postJson["longitude"] = -122.34
+    postJson["terminalCode"] = "Seattle Terminal 18"
+    postJson["unitState"] = data["Status"]
+    postJson["unitSize"] = data["Size"].split("'")[0]
+    postJson["unitTypeCode"] = data["Type Code"].replace('(', '').replace(')', '')
 
     loadPostJson = None
+    loadData = None
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+"Load.json") == True): #is there a Load event
         loadPostJson = copy.deepcopy(postJson)
+        with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal1\\ContainerInformation\\"+container+"Vessel.json") as loadJsonData:
+            loadData = json.load(loadJsonData)
 
-    #TODO: Fill info for Vessel event information
+    postJson["eventTime"] = datetime.datetime.strptime(data["Time"][:-3] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    if(data["Event"] == "LOAD"):
+        postJson["eventCode"] = "AE"
+        postJson["eventName"] = "Loaded on Vessel"
+    elif(data["Event"] == "UNLOAD"):
+        postJson["eventCode"] = "UV"
+        postJson["eventName"] = "Unloaded on Vessel"
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
 
     if(loadPostJson != None):
-        #TODO: fill in Load event information
+        loadPostJson["eventTime"] = datetime.datetime.strptime(loadData["Time"][:-3] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+        if(loadData["Event"] == "LOAD"):
+            loadPostJson["eventCode"] = "AE"
+            loadPostJson["eventName"] = "Loaded on Vessel"
+        elif(data["Event"] == "UNLOAD"):
+            loadPostJson["eventCode"] = "UV"
+            loadPostJson["eventName"] = "Unloaded on Vessel"
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(loadPostJson), headers = headers, verify = False)
         print(r)
