@@ -70,11 +70,11 @@ class baseInfo:
     }
 
 def Seattle18Post(container):
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+"Vessel.json") == False): #is there a Vessel event
+    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") == False): #is there a Vessel event
         return
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal1\\ContainerInformation\\"+container+"Vessel.json") as jsonData:
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") as jsonData:
         data = json.load(jsonData)
     postJson["unitId"] = data["Container Number"]
     postJson["vessel"] = data["Vessel"]
@@ -97,9 +97,9 @@ def Seattle18Post(container):
 
     loadPostJson = None
     loadData = None
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+"Load.json") == True): #is there a Load event
+    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Load.json") == True): #is there a Load event
         loadPostJson = copy.deepcopy(postJson)
-        with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal1\\ContainerInformation\\"+container+"Vessel.json") as loadJsonData:
+        with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal18\\ContainerInformation\\"+container+"Vessel.json") as loadJsonData:
             loadData = json.load(loadJsonData)
 
     postJson["eventTime"] = datetime.datetime.strptime(data["Time"][:-3] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
