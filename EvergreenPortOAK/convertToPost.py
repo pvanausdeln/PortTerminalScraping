@@ -117,7 +117,6 @@ def EverportPost(step):
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-    print(json.dumps(postJson))
     return
 
 def main(containerList):
