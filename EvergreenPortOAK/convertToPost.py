@@ -100,7 +100,7 @@ def EverportPost(step):
     postJson["carrierCode"] = data["Carrier"]
     postJson["sealNumber"] = data["Seal"]
     postJson["reportSource"] = "OceanEvent"
-    postJson["resolvedEventSource"] = "EVERPORT OAK RPA"
+    postJson["resolvedEventSource"] = "EVRPRT OAK RPA"
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
@@ -117,6 +117,7 @@ def EverportPost(step):
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    print(json.dumps(postJson))
     return
 
 def main(containerList):
