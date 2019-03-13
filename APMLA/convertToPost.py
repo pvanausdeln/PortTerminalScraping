@@ -71,7 +71,49 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def APMLAEventTranslate(postJson, eventText):
+def APMLAEventTranslate(postJson, eventText): #why doesn't python have case switch honestly
+    if(eventText.find("Unit exited facility via vessel") != -1):
+        postJson["eventCode"] = "VD"
+        postJson["eventName"] = "Vessel Departure"
+    elif(eventText.find("Unit loaded onto a vessel") != -1):
+        postJson["eventCode"] = "AE"
+        postJson["eventName"] = "Loaded on Vessel"
+    elif(eventText.find("Unit loaded onto a vessel") != -1):
+        postJson["eventCode"] = "VD"
+        postJson["eventName"] = "Vessel Departure"
+    elif(eventText.find("Unit received from a truck") != -1):
+        postJson["eventCode"] = "R"
+        postJson["eventName"] = "Received from Prior Carrier"
+    elif(eventText.find("Unit entered facility via gate") != -1):
+        postJson["eventCode"] = "I"
+        postJson["eventName"] = "INGATE"
+    elif(eventText.find("Dismount") != -1):
+        postJson["eventCode"] = "CC"
+        postJson["eventName"] = "Chassis Untie"
+    elif(eventText.find("Mount") != -1):
+        postJson["eventCode"] = "CB"
+        postJson["eventName"] = "Chassis Tie"
+    elif(eventText.find("Unit exited facility via gate") != -1):
+        postJson["eventCode"] = "OA"
+        postJson["eventName"] = "OUTGATE"
+    elif(eventText.find("Unit discharged from a vessel") != -1):
+        postJson["eventCode"] = "UV"
+        postJson["eventName"] = "Unloaded from Vessel"
+    elif(eventText.find("Unit entered facility via vessel") != -1):
+        postJson["eventCode"] = "VA"
+        postJson["eventName"] = "Vessel Arrival"
+    elif(eventText.find("Unit position updated") != -1):
+        postJson["eventCode"] = "E"
+        postJson["eventName"] = "Estimate to arrive at location"
+    elif(eventText.find("Unit moved in the yard") != -1):
+        postJson["eventCode"] = "IY"
+        postJson["eventName"] = "In Yard"
+    elif(eventText.find("Customs released") != -1):
+        postJson["eventCode"] = "CT"
+        postJson["eventName"] = "Customs released"
+    else:
+        return
+    print(json.dumps(postJson))
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     return
@@ -80,7 +122,9 @@ def APMLAEventRead(container, postJson):
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
         csv_reader = csv.reader(csvData, delimiter=',')
         for row in csv_reader:
-            postJson["eventTime"] = row[1]
+            if(row[1] == "Performed"): #skip title row
+                continue
+            postJson["eventTime"] = datetime.datetime.strptime(row[1], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             APMLAEventTranslate(postJson, row[2])
 
 def APMLAPost(container):
@@ -106,6 +150,7 @@ def APMLAPost(container):
     postJson["longitude"] = -118.25
 
     postJson["resolvedEventSource"] = "APM LA RPA"
+    postJson["reportSource"] = "OceanEvent"
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
