@@ -71,8 +71,15 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def APMLAEvent(row, postJson):
+def APMLAEventTranslate(postJson, eventText):
     return postJson
+
+def APMLAEventRead(container, postJson):
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
+        csv_reader = csv.reader(csvData, delimiter=',')
+        for row in csv_reader:
+            postJson["eventTime"] = row[1]
+            postJson = APMLAEventTranslate(postJson, row[2])
 
 def APMLAPost(container):
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") == False): #is there a legitimate event
@@ -81,8 +88,6 @@ def APMLAPost(container):
         return
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") as jsonData:
         data = json.load(jsonData)
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
-        csv_reader = csv.reader(csvData, delimiter=',')
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     postJson["unitId"] = data["Container"]
@@ -105,9 +110,7 @@ def APMLAPost(container):
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
 
-    for row in csv_reader:
-        print(row)
-        postJson = APMLAEvent(row, postJson)
+    APMLAEventRead(container, postJson)
     print(json.dumps(postJson))
     return
 
