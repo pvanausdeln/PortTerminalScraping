@@ -5,6 +5,7 @@ import copy
 import requests
 import datetime
 import glob
+import csv
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
@@ -70,11 +71,18 @@ class baseInfo:
     "workOrderNumber": None
     }
 
+def APMLAEvent(row, postJson):
+    return postJson
+
 def APMLAPost(container):
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") == False): #is there a legitimate event
         return
+    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") == False):
+        return
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") as jsonData:
         data = json.load(jsonData)
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
+        csv_reader = csv.reader(csvData, delimiter=',')
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     postJson["unitId"] = data["Container"]
@@ -96,6 +104,10 @@ def APMLAPost(container):
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
+
+    for row in csv_reader:
+        print(row)
+        postJson = APMLAEvent(row, postJson)
     print(json.dumps(postJson))
     return
 
