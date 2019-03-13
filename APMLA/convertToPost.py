@@ -72,14 +72,16 @@ class baseInfo:
     }
 
 def APMLAEventTranslate(postJson, eventText):
-    return postJson
+    headers = {'content-type':'application/json'}
+    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    return
 
 def APMLAEventRead(container, postJson):
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
         csv_reader = csv.reader(csvData, delimiter=',')
         for row in csv_reader:
             postJson["eventTime"] = row[1]
-            postJson = APMLAEventTranslate(postJson, row[2])
+            APMLAEventTranslate(postJson, row[2])
 
 def APMLAPost(container):
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") == False): #is there a legitimate event
@@ -111,7 +113,6 @@ def APMLAPost(container):
     postJson["voyageNumber"] = data["Voyage"]
 
     APMLAEventRead(container, postJson)
-    print(json.dumps(postJson))
     return
 
 def main(containerList):
