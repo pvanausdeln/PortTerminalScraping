@@ -158,7 +158,8 @@ def APMLAPost(container):
     return
 
 def main(containerList):
-        APMLAPost(containerList)
+    for container in containerList:
+        APMLAPost(container)
 
 if __name__ == "__main__":
     main(sys.argv[1])
