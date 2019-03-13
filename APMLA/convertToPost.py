@@ -71,8 +71,36 @@ class baseInfo:
     }
 
 def APMLAPost(container):
+    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") == False): #is there a legitimate event
+        return
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") as jsonData:
+        data = json.load(jsonData)
+
+    postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+    postJson["unitId"] = data["Container"]
+    postJson["billOfLadingNumber"] = data["Bill of Lading"]
+    postJson["unitSize"] = data["Size/Type/Height"].split("/")[0]
+    postJson["unitType"] = data["Size/Type/Height"].split("/")[1]
+    postJson["terminalCode"] = data["Terminal"]
+
+    postJson["location"] = "2500 Navy Way, San Pedro, CA 90731"
+    postJson["city"] = "Los Angeles"
+    postJson["state"] = "CA"
+    postJson["country"] = "US"
+    postJson["latitude"] = 33.72
+    postJson["longitude"] = -118.25
+
+    postJson["resolvedEventSource"] = "APM LA RPA"
+    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["vessel"] = data["Vessel"]
+    postJson["voyageNumber"] = data["Voyage"]
+    print(json.dumps(postJson))
     return
 
 def main(containerList):
-    for container in containerList:
-        APMLAPost(container)
+        APMLAPost(containerList)
+
+if __name__ == "__main__":
+    main(sys.argv[1])
