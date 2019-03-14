@@ -110,7 +110,7 @@ def Seattle30Post(container):
     postJson["location"] = "1050 SW Spokane St, Seattle, WA 98134"
     postJson["latitude"] = 47.57
     postJson["longitude"] = -122.34
-    postJson["terminalCode"] = "Seattle Terminal 18"
+    postJson["terminalCode"] = "Seattle Terminal 30"
     postJson["unitState"] = data["Status"]
     postJson["unitSize"] = data["Size"].split("'")[0]
     postJson["unitTypeCode"] = data["Type Code"].replace('(', '').replace(')', '')
