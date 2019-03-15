@@ -96,7 +96,7 @@ def EverportPost(step):
     if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1: #it is the current year
         return
     postJson["unitId"] = data["Container"]
-    #postJson["carrierName"] = data["Trucker"]
+    postJson["carrierName"] = data["Trucker"]
     postJson["carrierCode"] = data["Carrier"]
     postJson["sealNumber"] = data["Seal"]
     postJson["reportSource"] = "OceanEvent"
