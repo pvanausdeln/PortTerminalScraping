@@ -70,7 +70,24 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def EverportPost(step):
+def TraPacStep(event):
+    if(event.find("LOAD-OUT") != -1):
+        return("OA","OUTGATE")
+    elif(event.find("DISCHARGED") != -1):
+        return("UV","Unloaded from Vessel")
+    elif(event.find("LOADED") != -1):
+        return("AE","Loaded on Vessel")
+    elif(event.find("EMPTY-IN") or event.find("LOAD-IN") != -1):
+        return("I","INGATE")
+    elif(event.find("UNLOADED FROM RAIL") != -1):
+        return("UR","UNLOADED_FROM_RAIL")
+    elif(event.find("RAIL ARRIVAL") != -1):
+        return("AR", "RAIL_ARRIVAL")
+    else:
+        return(None, None)
+
+
+def TraPacPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
@@ -86,9 +103,17 @@ def EverportPost(step):
         postJson["voyageNumber"] = data["Voyage"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
         postJson["workOrderNumber"] = data["WONumber"]
+        postJson["reportSource"] = "OceanEvent"
 
-        postJson["eventTime"] = data["Datetime"]
-
+        postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+        postJson["unitSize"] = data["SIZE"]
+        postJson["unitType"] = data["HEIGHT"]
+        postJson["eventCode"], postJson["eventName"] = TraPacStep(data["Action"])
+        if(postJson["eventCode"] == None):
+            return
+        headers = {'content-type':'application/json'}
+        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+        print(r)
         print(json.dumps(postJson))
 
 
@@ -102,7 +127,7 @@ def main(containerList):
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-            EverportPost(step)
+            TraPacPost(step)
 
 if __name__=="__main__":
     main(sys.argv[1])
