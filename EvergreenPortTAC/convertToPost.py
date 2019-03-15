@@ -108,7 +108,7 @@ def EverportPost(step):
     postJson["voyageNumber"] = data["Voyage"]
     postJson["longitude"] = -122.37
     postJson["latitude"] = 47.25
-    postJson["address"] = "4015 N Frontage Rd, Tacoma, WA 98421"
+    postJson["location"] = "4015 N Frontage Rd, Tacoma, WA 98421"
     postJson["country"] = "US"
     postJson["state"] = "WA"
     postJson["city"] = "Tacoma"
