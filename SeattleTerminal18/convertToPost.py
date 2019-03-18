@@ -81,7 +81,7 @@ def getEvent(data, postJson):
         postJson["eventName"] = "INGATE"
     elif(data["Event"] == "FULL OUT"):
         postJson["eventCode"] = "OA"
-        postJson["eventNAme"] = "OUTGATE"
+        postJson["eventName"] = "OUTGATE"
     elif(data["Event"] == "EMPTY OUT"):
         postJson["eventCode"] = "EE"
         postJson["eventCode"] = "Empty Equipment Dispatched"
