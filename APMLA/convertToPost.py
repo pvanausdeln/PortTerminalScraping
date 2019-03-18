@@ -78,9 +78,6 @@ def APMLAEventTranslate(postJson, eventText): #why doesn't python have case swit
     elif(eventText.find("Unit loaded onto a vessel") != -1):
         postJson["eventCode"] = "AE"
         postJson["eventName"] = "Loaded on Vessel"
-    elif(eventText.find("Unit loaded onto a vessel") != -1):
-        postJson["eventCode"] = "VD"
-        postJson["eventName"] = "Vessel Departure"
     elif(eventText.find("Unit received from a truck") != -1):
         postJson["eventCode"] = "R"
         postJson["eventName"] = "Received from Prior Carrier"
