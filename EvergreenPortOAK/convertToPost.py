@@ -101,7 +101,6 @@ def EverportPost(step):
     postJson["sealNumber"] = data["Seal"]
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "EVRPRT OAK RPA"
-    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["vessel"] = data["Vessel"]
