@@ -2,5 +2,6 @@
 
 */.screenshots
 
-*/ContainerInformation
-*/ContainerInformation/*.json
+/**/*.csv
+/**/*.json
+/**/*.xlsx
