@@ -3,5 +3,5 @@
 */.screenshots
 
 /**/*.csv
-/**/*.json
+/**/ContainerInformation/*.json
 /**/*.xlsx
