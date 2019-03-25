@@ -5,3 +5,4 @@
 /**/*.csv
 /**/ContainerInformation/*.json
 /**/*.xlsx
+**/Test*
