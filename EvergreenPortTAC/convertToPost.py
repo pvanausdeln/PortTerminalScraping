@@ -120,9 +120,10 @@ def EverportPost(step):
     return
 
 def main(containerList):
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\EvergreenPortTAC\\ContainerInformation\\"+containerList+'Step*.json', recursive = True) #get all the json steps
+    for container in containerList:
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\EvergreenPortTAC\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-            return
+            continue
         fileList = [f for f in fileList if containerList in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
