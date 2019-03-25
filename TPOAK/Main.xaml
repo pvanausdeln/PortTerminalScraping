@@ -268,7 +268,7 @@
                   <ui:Continue sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="Continue_1" />
                 </If.Else>
               </If>
-              <Sequence DisplayName="Event Information" sap:VirtualizedContainerService.HintSize="436,500" sap2010:WorkflowViewState.IdRef="Sequence_35">
+              <Sequence DisplayName="Event Information" sap:VirtualizedContainerService.HintSize="464,51" sap2010:WorkflowViewState.IdRef="Sequence_35">
                 <sap:WorkflowViewStateService.ViewState>
                   <scg:Dictionary x:TypeArguments="x:String, x:Object">
                     <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -348,7 +348,7 @@
                   <InArgument x:TypeArguments="x:Int32">0</InArgument>
                 </Assign.Value>
               </Assign>
-              <DoWhile DisplayName="Do While" sap:VirtualizedContainerService.HintSize="464,51" sap2010:WorkflowViewState.IdRef="DoWhile_1">
+              <DoWhile DisplayName="Do While" sap:VirtualizedContainerService.HintSize="512,3142" sap2010:WorkflowViewState.IdRef="DoWhile_1">
                 <sap:WorkflowViewStateService.ViewState>
                   <scg:Dictionary x:TypeArguments="x:String, x:Object">
                     <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -356,7 +356,7 @@
                   </scg:Dictionary>
                 </sap:WorkflowViewStateService.ViewState>
                 <DoWhile.Condition>[index &lt; ExtractDataTable3.Rows.Count]</DoWhile.Condition>
-                <Sequence sap:VirtualizedContainerService.HintSize="486,2802" sap2010:WorkflowViewState.IdRef="Sequence_39">
+                <Sequence sap:VirtualizedContainerService.HintSize="486,2980" sap2010:WorkflowViewState.IdRef="Sequence_39">
                   <sap:WorkflowViewStateService.ViewState>
                     <scg:Dictionary x:TypeArguments="x:String, x:Object">
                       <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -385,6 +385,7 @@
                   <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_4" Key="Trucker" Value="[ExtractDataTable3.Rows(index).Item(3).ToString]" />
                   <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_5" Key="Companion" Value="[ExtractDataTable3.Rows(index).Item(4).ToString]" />
                   <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_6" Key="Action" Value="[ExtractDataTable3.Rows(index).Item(5).ToString]" />
+                  <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_14" Key="Container" Value="[Containers.ToList().ElementAt(index).ToString]" />
                   <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_7" Key="Vessel" Value="[Vessels.ToList().ElementAt(index).ToString]" />
                   <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_8" Key="Voyage" Value="[Voyages.ToList().ElementAt(index).ToString]" />
                   <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray2]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_9" Key="WONumber" Value="[WorkOrders.ToList().ElementAt(index).ToString]" />

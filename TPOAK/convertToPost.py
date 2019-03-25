@@ -105,6 +105,7 @@ def TraPacPost(step):
         postJson["workOrderNumber"] = data["WONumber"]
         postJson["reportSource"] = "OceanEvent"
 
+        postJson["unitId"] = data["Container"]
         postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
         postJson["unitSize"] = data["SIZE"]
         postJson["unitType"] = data["HEIGHT"]

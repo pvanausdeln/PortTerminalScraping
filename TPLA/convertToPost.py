@@ -106,6 +106,7 @@ def TraPacPost(step):
         postJson["reportSource"] = "OceanEvent"
 
         postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+        postJson["unitId"] = data[""]
         postJson["unitSize"] = data["SIZE"]
         postJson["unitType"] = data["HEIGHT"]
         postJson["eventCode"], postJson["eventName"] = TraPacStep(data["Action"])
