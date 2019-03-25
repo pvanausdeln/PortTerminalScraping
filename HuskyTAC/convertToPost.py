@@ -70,11 +70,46 @@ class baseInfo:
     "workOrderNumber": None
     }
 
+def HuskyStep(event):
+    #TODO: implement function with mappings
+    return(None, None)
+
 def HuskyPost(step):
-    return
+    with open(step) as jsonData:
+        data = json.load(jsonData)
+        postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+
+    postJson["resolvedEventSource"] = "HUSKY TAC RPA"
+    postJson["location"] = "1101 Port of Tacoma Rd, Tacoma, WA 98421"
+    postJson["city"] = "Tacoma"
+    postJson["state"] = "WA"
+    postJson["country"] = "US"
+    postJson["latitude"] = 47.27
+    postJson["longitude"] = -122.40
+    postJson["vessel"] = data["Vessel"]
+    postJson["voyageNumber"] = data["Voyage"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["reportSource"] = "OceanEvent"
+
+    postJson["unitId"] = data["Container"]
+    postJson["eventTime"] = datetime.datetime.strptime(data["Date/Time"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    postJson["eventCode"], postJson["eventName"] = HuskyStep(data["Event"])
+
+    headers = {'content-type':'application/json'}
+    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    print(r)
+    print(json.dumps(postJson))
 
 def main(containerList):
-    return
+    for container in containerList:
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\HuskyTAC\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        if (not fileList):
+            return
+        fileList = [f for f in fileList if container in f] #set of steps for this number
+        fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+        for step in fileList:
+            HuskyPost(step)
 
 if __name__=="__main__":
     main(sys.argv[1])
