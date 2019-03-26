@@ -78,6 +78,7 @@ def LBCTPost(step):
 
 def main(containerList):
     for container in containerList:
+        print(container)
         continue
 
 if __name__=="__main__":
