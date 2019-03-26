@@ -71,7 +71,26 @@ class baseInfo:
     }
 
 def HuskyStep(event):
-    #TODO: implement function with mappings
+    if(event.find("LOADRAIL") != -1):
+        return("AL", "Loaded on Rail")
+    elif(event.find("DISCHARGE") != -1):
+        return("UV", "Unloaded from Vessel")
+    elif(event.find("RECEIVE") != -1):
+        return("CO", "Cargo Received")
+    elif(event.find("LOAD") != -1):
+        return("AE", "Loaded on Vessel")
+    elif(event.find("UNLOAD") != -1):
+        return("U", "Unloading")
+    elif(event.find("GATEOUT") != -1):
+        return("OA", "OUTGATE")
+    elif(event.find("GATEIN") != -1):
+        return("I", "INGATE")
+    elif(event.find("RELEASE") != -1):
+        return("CR", "Carrier Release")
+    elif(event.find("SHIFT") != -1):
+        return("TM", "Intra terminal movement")
+    elif(event.find("CARGOEXAM") != -1):
+        return("GI", "Terminal Gate Inspection")
     return(None, None)
 
 def HuskyPost(step):
@@ -93,8 +112,13 @@ def HuskyPost(step):
     postJson["reportSource"] = "OceanEvent"
 
     postJson["unitId"] = data["Container"]
-    postJson["eventTime"] = datetime.datetime.strptime(data["Date/Time"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    postJson["eventTime"] = datetime.datetime.strptime(data["Date/Time"], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M:%S')
     postJson["eventCode"], postJson["eventName"] = HuskyStep(data["Event"])
+    postJson["carrierName"] = data["Line"]
+    postJson["unitState"] = data["Sts"]
+    postJson["unitType"] = data["SzTpHt"][2:4]
+    postJson["unitSize"] = data["SzTpHt"][:2]
+    postJson["carrierCode"]  = data["Carrier"]
 
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
@@ -105,7 +129,7 @@ def main(containerList):
     for container in containerList:
         fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\HuskyTAC\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-            return
+            continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
