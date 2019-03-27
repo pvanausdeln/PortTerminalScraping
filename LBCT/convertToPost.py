@@ -4,7 +4,7 @@ import json
 import copy
 import requests
 import datetime
-import glob
+import csv
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
@@ -70,7 +70,57 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def LBCTPost(step):
+def LBCTStep(event):
+    if(event.find("CUSTOMS_DEFAULT_HOLD") != -1):
+        return("CT", "Customs Release")
+    elif(event.find("FREIGHT_BL_HOLD") != -1):
+        return("FS", "Freight Release")
+    return (None, None)
+
+def LBCTPost(container):
+    postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\LBCT\\ContainerInformation\\"+container+".json") as jsonData:
+        data = json.load(jsonData)
+    postJson["unitId"] = data["Container"]
+    postJson["unitSize"] = data["Size"]
+    postJson["unitTypeCode"] = data["Type"]
+
+    postJson["reportSource"] = "OceanEvent"
+    postJson["resolvedEventSource"] = "LBCT RPA"
+    postJson["location"] = "201 Pico Ave, Long Beach, CA 90802"
+    postJson["city"] = "Long Beach"
+    postJson["state"] = "CA"
+    postJson["country"] = "US"
+    postJson["latitude"] = 33.77
+    postJson["longitude"] = -118.21
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["vessel"] = data["Vessel"]
+    postJson["voyageNumber"] = data["Voyage"]
+
+    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\LBCT\\ContainerInformation\\"+container+".csv") as csvData:
+        csv_reader = csv.reader(csvData, delimiter=',')
+        holdJson = copy.deepcopy(postJson)
+        for row in csv_reader:
+            if(row[1] == "APPLIED"):
+                continue
+            holdJson["eventCode"], holdJson["eventName"] = LBCTStep(row[0])
+            if(holdJson["eventCode"] is None):
+                continue
+            holdJson["eventTime"] = datetime.datetime.strptime(row[1], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+            headers = {'content-type':'application/json'}
+            r = requests.post(baseInfo.postURL, data = json.dumps(holdJson), headers = headers, verify = False)
+    if(data["Discharged"].find("Actual") == -1):
+        return
+    elif(data["Available for Pickup"].find("Yes") != -1):
+        postJson["eventCode"], postJson["eventName"] = ("APL", "Arrived Pickup Location")
+        postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+        headers = {'content-type':'application/json'}
+        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    postJson["eventCode"], postJson["eventName"] = ("DI", "Discharged")
+    postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+    headers = {'content-type':'application/json'}
+    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     return
 
 
@@ -78,8 +128,7 @@ def LBCTPost(step):
 
 def main(containerList):
     for container in containerList:
-        print(container)
-        continue
+        LBCTPost(container)
 
 if __name__=="__main__":
     main(sys.argv[1])
