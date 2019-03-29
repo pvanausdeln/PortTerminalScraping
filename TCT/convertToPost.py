@@ -70,65 +70,63 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def TraPacStep(event):
-    if(event.find("LOAD-OUT") != -1):
-        return("OA","OUTGATE")
-    elif(event.find("DISCHARGED") != -1):
-        return("UV","Unloaded from Vessel")
-    elif(event.find("LOADED") != -1):
-        return("AE","Loaded on Vessel")
-    elif(event.find("EMPTY-IN") or event.find("LOAD-IN") != -1):
-        return("I","INGATE")
-    elif(event.find("UNLOADED FROM RAIL") != -1):
-        return("UR","UNLOADED_FROM_RAIL")
-    elif(event.find("RAIL ARRIVAL") != -1):
-        return("AR", "RAIL_ARRIVAL")
-    else:
-        return(None, None)
+def TCTStep(event):
+    if(event.find("PTTGateOut") != -1):
+        return("OA","OUTGATE", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    elif(event.find("Delivered") != -1):
+        return("A","ARRIVED",event.split(" ")[1].strptime("%m/%d/%Y %H:%M %p").strftime('%m-%d-%Y %H:%M:%S'))
+    elif(event.find("Schedule Appointment") != -1):
+        return("RN","Pickup Appointment", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    elif(event.find("In Yard") != -1):
+        return("IY","IN YARD", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    elif(event.find("Manifested") != -1):
+        return("MET","Manifest Event Hold", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    elif(event.find("Assigned To Trucker") != -1):
+        return("OA","OUTGATE", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    elif(event.find("On Ship") != -1):
+        return("IT","In Transit (Ocean)", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    return (None, None, None)
 
-
-def TraPacPost(step):
+def TCTPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
-        postJson["resolvedEventSource"] = "TRAPAC OAK RPA"
-        postJson["location"] = "2800 7th St, Oakland, CA 94607"
-        postJson["city"] = "Oakland"
+        postJson["resolvedEventSource"] = "WBCT LA RPA"
+        postJson["location"] = "2050 John S Gibson Blvd, San Pedro, CA 90731"
+        postJson["city"] = "San Pedro"
         postJson["state"] = "CA"
         postJson["country"] = "US"
-        postJson["latitude"] = 37.81
-        postJson["longitude"] = -122.32
+        postJson["latitude"] = 33.73
+        postJson["longitude"] = -118.33
         postJson["vessel"] = data["Vessel"]
         postJson["voyageNumber"] = data["Voyage"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
         postJson["workOrderNumber"] = data["WONumber"]
         postJson["reportSource"] = "OceanEvent"
 
-        postJson["unitId"] = data["Container"]
-        postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-        postJson["unitSize"] = data["SIZE"]
-        postJson["unitTypeCode"] = data["HEIGHT"]
-        postJson["eventCode"], postJson["eventName"] = TraPacStep(data["Action"])
-        if(postJson["eventCode"] == None):
-            return
-        headers = {'content-type':'application/json'}
-        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        print(r)
-        print(json.dumps(postJson))
+        postJson["unitId"] = data["Container"].replace("-","")
+        postJson["carrierName"] = data["SSCO"]
+        postJson["unitTypeCode"] = data["Type"]
+        postJson["unitSize"] = data["Length"].replace("'", "")
+        postJson["eventCode"], postJson["eventName"], postJson["eventTime"] = WBCTStep(data["Current State"])
+        if(postJson["eventCode"] != None):
+            headers = {'content-type':'application/json'}
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
+            print(json.dumps(postJson))
 
 
 
 
 def main(containerList):
-    for container in containerList:
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\TPLA\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\TCT\\ContainerInformation\\"+containerList+".json", recursive = True) #get all the json steps
         if (not fileList):
-            continue
-        fileList = [f for f in fileList if container in f] #set of steps for this number
+            return
+        fileList = [f for f in fileList if containerList in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-            TraPacPost(step)
+            TCTPost(step)
 
 if __name__=="__main__":
     main(sys.argv[1])

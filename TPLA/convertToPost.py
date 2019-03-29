@@ -106,9 +106,9 @@ def TraPacPost(step):
         postJson["reportSource"] = "OceanEvent"
 
         postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-        postJson["unitId"] = data[""]
+        postJson["unitId"] = data["Container"]
         postJson["unitSize"] = data["SIZE"]
-        postJson["unitType"] = data["HEIGHT"]
+        postJson["unitTypeCode"] = data["HEIGHT"]
         postJson["eventCode"], postJson["eventName"] = TraPacStep(data["Action"])
         if(postJson["eventCode"] == None):
             return
@@ -124,7 +124,7 @@ def main(containerList):
     for container in containerList:
         fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\TPLA\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-            return
+            continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
