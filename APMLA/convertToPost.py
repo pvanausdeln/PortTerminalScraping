@@ -110,16 +110,17 @@ def APMLAEventTranslate(postJson, eventText): #why doesn't python have case swit
     print(json.dumps(postJson))
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    print(r)
     return
 
 def APMLAEventRead(container, postJson):
     with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
         csv_reader = csv.reader(csvData, delimiter=',')
         for row in csv_reader:
-            if(row[1] == "Performed"): #skip title row
+            if(row[0].find("Performed") != -1): #skip title row
                 continue
-            postJson["eventTime"] = datetime.datetime.strptime(row[1], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-            APMLAEventTranslate(postJson, row[2])
+            postJson["eventTime"] = datetime.datetime.strptime(row[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M:%S')
+            APMLAEventTranslate(postJson, row[1])
 
 def APMLAPost(container):
     if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") == False): #is there a legitimate event
@@ -130,11 +131,10 @@ def APMLAPost(container):
         data = json.load(jsonData)
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-    postJson["unitId"] = data["Container"]
-    postJson["billOfLadingNumber"] = data["Bill of Lading"]
+    postJson["unitId"] = data["Container ID"]
+    postJson["billOfLadingNumber"] = data["Bill Of Lading"]
     postJson["unitSize"] = data["Size/Type/Height"].split("/")[0]
     postJson["unitType"] = data["Size/Type/Height"].split("/")[1]
-    postJson["terminalCode"] = data["Terminal"]
 
     postJson["location"] = "2500 Navy Way, San Pedro, CA 90731"
     postJson["city"] = "Los Angeles"
