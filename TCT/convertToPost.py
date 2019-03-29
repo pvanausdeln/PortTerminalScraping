@@ -74,7 +74,7 @@ def TCTStep(event):
     if(event.find("PTTGateOut") != -1):
         return("OA","OUTGATE", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     elif(event.find("Delivered") != -1):
-        return("A","ARRIVED", datetime.datetime.strptime(event.splitlines()[1],"%m/%d/%Y %H:%M %p").strftime('%m-%d-%Y %H:%M:%S'))
+        return("A","ARRIVED", datetime.datetime.strptime(event.splitlines()[-1],"%m/%d/%Y %H:%M %p").strftime('%m-%d-%Y %H:%M:%S'))
     elif(event.find("Schedule Appointment") != -1):
         return("RN","Pickup Appointment", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     elif(event.find("In Yard") != -1):

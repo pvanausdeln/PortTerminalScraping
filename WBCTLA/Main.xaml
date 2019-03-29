@@ -125,7 +125,7 @@
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <Sequence DisplayName="Login" sap:VirtualizedContainerService.HintSize="336,760" sap2010:WorkflowViewState.IdRef="Sequence_41">
+      <Sequence DisplayName="Login" sap:VirtualizedContainerService.HintSize="350,760" sap2010:WorkflowViewState.IdRef="Sequence_41">
         <Sequence.Variables>
           <Variable x:TypeArguments="x:String" Default="pvanausblume" Name="WBCTUN" />
           <Variable x:TypeArguments="x:String" Default="pvanausblume1" Name="WBCTPW" />
@@ -200,7 +200,7 @@
             </ui:BrowserScope.Body>
           </ui:BrowserScope>
         </Sequence>
-        <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="671,5457" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[Containers]">
+        <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="314,51" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[Containers]">
           <ui:ForEach.Body>
             <ActivityAction x:TypeArguments="x:Object">
               <ActivityAction.Argument>

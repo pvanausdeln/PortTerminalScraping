@@ -74,7 +74,7 @@ def WBCTStep(event):
     if(event.find("PTTGateOut") != -1):
         return("OA","OUTGATE", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     elif(event.find("Delivered") != -1):
-        return("A","ARRIVED", datetime.datetime.strptime(event.splitlines()[1],"%m/%d/%Y %H:%M %p").strftime('%m-%d-%Y %H:%M:%S'))
+        return("A","ARRIVED", datetime.datetime.strptime(event.splitlines()[-1],"%m/%d/%Y %H:%M %p").strftime('%m-%d-%Y %H:%M:%S'))
     elif(event.find("Schedule Appointment") != -1):
         return("RN","Pickup Appointment", datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     elif(event.find("In Yard") != -1):
@@ -120,10 +120,9 @@ def WBCTPost(step):
 
 
 def main(containerList):
-    for container in containerList:
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\WBCTLA\\ContainerInformation\\"+container+".json", recursive = True) #get all the json steps
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\WBCTLA\\ContainerInformation\\"+containerList+".json", recursive = True) #get all the json steps
         if (not fileList):
-            continue
+            return
         fileList = [f for f in fileList if containerList in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
