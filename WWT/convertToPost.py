@@ -71,17 +71,25 @@ class baseInfo:
     }
 
 def getEvent(event):
-    
-    return (None, None)
+    if(event.find("Vessel Rc") != -1):
+        return("VA", "Vessel Arrival")
+    elif(event.find("Vessel Dl") != -1):
+        return("UV", "Unloaded from Vessel")
+    elif(event.find("Gate Rcv") != -1):
+        return("I", "INGATE")
+    elif(event.find("Gate Dlvr") != -1):
+        return("OA", "OUTGATE")
+    return(None, None)
 
 def WWTPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
+        if(data["Terminal"].find("WWT") == -1):
+            return
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
         
         postJson["reportSource"] = "OceanEvent"
         postJson["resolvedEventSource"] = "WWT RPA"
-        postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
         postJson["workOrderNumber"] = data["WONumber"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
         postJson["vessel"] = data["Vessel"]
@@ -97,21 +105,22 @@ def WWTPost(step):
         postJson["unitSize"] = data["Container Type"][0:2]
         postJson["unitType"] = data["Container Type"][2:2]
         postJson["eventCode"], postJson["eventName"] = getEvent(data["Transaction"])
-        postJson["evenTime"] = datetime.datetime.strptime(' '.join(data["Datetime"].split()), '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+        postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
 
+        if(postJson["eventCode"] is None):
+            return
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
         print(r)
 
 def main(containerList):
-    for container in containerList:
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\WWT\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\WWT\\ContainerInformation\\"+containerList+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-                continue
-        fileList = [f for f in fileList if container in f] #set of steps for this number
+            return
+        fileList = [f for f in fileList if containerList in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-                WWTPost(step)
+            WWTPost(step)
 
 if __name__ == "__main__":
     main(sys.argv[1])
