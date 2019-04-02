@@ -5,6 +5,7 @@ import json
 import copy
 import datetime
 import glob
+import string
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
