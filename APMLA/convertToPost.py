@@ -6,6 +6,7 @@ import requests
 import datetime
 import glob
 import csv
+import string
 
 class baseInfo:
     postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
@@ -119,7 +120,8 @@ def APMLAEventRead(container, postJson):
         for row in csv_reader:
             if(row[0].find("Performed") != -1): #skip title row
                 continue
-            postJson["eventTime"] = datetime.datetime.strptime(row[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventTime"] = ''.join(x for x in row[0] if x in string.printable)
+            postJson["eventTime"] = datetime.datetime.strptime(postJson["eventTime"], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M:%S')
             APMLAEventTranslate(postJson, row[1])
 
 def APMLAPost(container):
