@@ -72,55 +72,73 @@ class baseInfo:
     }
 
 def getEvent(event):
-    if(event.find("Vessel Rc") != -1):
-        return("VA", "Vessel Arrival")
-    elif(event.find("Vessel Dl") != -1):
-        return("UV", "Unloaded from Vessel")
-    elif(event.find("Gate Rcv") != -1):
-        return("I", "INGATE")
-    elif(event.find("Gate Dlvr") != -1):
-        return("OA", "OUTGATE")
+    if(event.find("UNIT_RESERVE") != -1):
+        return("RC", "Reserve Container Against Booking")
+    elif(event.find("UNIT_OUT_VESSEL") != -1):
+        return("VD", "Vessel Departure")
+    elif(event.find("UNIT_DISMOUNT") != -1):
+        return("CC", "Chassis Un-Tie")
+    elif(event.find("UNIT_LOAD") != -1):
+        return("AE", "Loaded on Vessel")
+    elif(event.find("UNIT_MOUNT") != -1):
+	    return("CB", "Chassis Tie")
+    elif(event.find("UNIT_REROUTE") != -1):
+	    return("AI", "Shipment has been reconsigned")
+    elif(event.find("UNIT_RECEIVE") != -1):
+	    return("I", "In-Gate")
+    elif(event.find("UNIT_YARD_MOVE") != -1):
+	    return("TM", "Intra-Terminal Movement")
+    elif(event.find("UNIT_DISCH") != -1):
+	    return("UV", "Unloaded from Vessel")
     return(None, None)
 
 def BayportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
-        if(data["Terminal"].find("NCT") == -1):
-            return
-        postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+        # if(data["Terminal"].find("NCT") == -1):
+            # return
+    postJson = copy.deepcopy(baseInfo.shipmentEventBase)
         
-        postJson["reportSource"] = "OceanEvent"
-        postJson["resolvedEventSource"] = "BAYPORT RPA"
-        postJson["workOrderNumber"] = data["WONumber"]
-        postJson["billOfLadingNumber"] = data["BOLNumber"]
-        postJson["vessel"] = data["Vessel"]
-        postJson["voyageNumber"] = data["Voyage"]
+    postJson["reportSource"] = "OceanEvent"
+    postJson["resolvedEventSource"] = "BAYPORT RPA"
+    postJson["workOrderNumber"] = data["WONumber"]
+    postJson["billOfLadingNumber"] = data["BOLNumber"]
+    postJson["vessel"] = data["Vessel"]
+    postJson["voyageNumber"] = data["Voyage"]
+		
 
-        postJson["longitude"] = -79.96
-        postJson["latitude"] = 32.90
-        postJson["location"] = "1000 Remount Rd, North Charleston, SC 29406"
-        postJson["country"] = "US"
-        postJson["state"] = "SC"
-        postJson["city"] = "Charleston"
+    postJson["longitude"] = -79.96
+    postJson["latitude"] = 32.90
+    postJson["location"] = "1000 Remount Rd, North Charleston, SC 29406"
+    postJson["country"] = "US"
+    postJson["state"] = "SC"
+    postJson["city"] = "Charleston"
+    postJson["eventTime"] = datetime.datetime.strptime(data["datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    postJson["unitId"] = data["Container"]
+    postJson["notes"]=data["Notes"]
+    postJson["unitTypeCode"]=data["Unit Code"]
+    postJson["receiverCode"]=data["Receiver Code"]
+    postJson["carrierName"]=data["Carrier"]
+    postJson["sealNumber"]=data["Seal Number"]
+    postJson["unitSize"] = data["SizeTypeHeight"][0:2]
+    postJson["unitType"] = data["SizeTypeHeight"][5:7]
+    postJson["eventCode"], postJson["eventName"] = getEvent(data["Event"])
+    postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
+    if(postJson["eventCode"] is None):
+        return
+    headers = {'content-type':'application/json'}
+    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    print(r)
 
-        postJson["unitSize"] = data["Container Type"][0:2]
-        postJson["unitType"] = data["Container Type"][2:2]
-        postJson["eventCode"], postJson["eventName"] = getEvent(data["Transaction"])
-        postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
-        if(postJson["eventCode"] is None):
-            return
-        headers = {'content-type':'application/json'}
-        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        print(r)
-
-def main(containerList):
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\BayportHOU\\ContainerInformation\\"+containerList+'Step*.json', recursive = True) #get all the json steps
-        if (not fileList):
-            return
-        fileList = [f for f in fileList if containerList in f] #set of steps for this number
-        fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
-        for step in fileList:
-            BayportPost(step)
+def main():
+    current_dir=os.getcwd()
+    fileList = glob.glob(r""+current_dir+"\\ContainerInformation\\BEAU4054276Step0.json", recursive = True) #get all the json steps
+    if (not fileList):
+        return
+    fileList = [f for f in fileList if containerList in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        BayportPost(step)
 
 if __name__ == "__main__":
     main(sys.argv[1])
