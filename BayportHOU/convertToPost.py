@@ -82,7 +82,7 @@ def getEvent(event):
         return("OA", "OUTGATE")
     return(None, None)
 
-def WWTPost(step):
+def BayportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
         if(data["Terminal"].find("NCT") == -1):
@@ -114,14 +114,13 @@ def WWTPost(step):
         print(r)
 
 def main(containerList):
-    for container in containerList:
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\WWT\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\BayportHOU\\ContainerInformation\\"+containerList+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-            continue
-        fileList = [f for f in fileList if container in f] #set of steps for this number
+            return
+        fileList = [f for f in fileList if containerList in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-            WWTPost(step)
+            BayportPost(step)
 
 if __name__ == "__main__":
     main(sys.argv[1])
