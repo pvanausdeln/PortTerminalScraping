@@ -90,13 +90,12 @@ def getEvent(event):
 	    return("TM", "Intra-Terminal Movement")
     elif(event.find("UNIT_DISCH") != -1):
 	    return("UV", "Unloaded from Vessel")
+    print("failed")
     return(None, None)
 
 def BayportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
-        # if(data["Terminal"].find("NCT") == -1):
-            # return
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
         
     postJson["reportSource"] = "OceanEvent"
@@ -113,7 +112,7 @@ def BayportPost(step):
     postJson["country"] = "US"
     postJson["state"] = "SC"
     postJson["city"] = "Charleston"
-    postJson["eventTime"] = datetime.datetime.strptime(data["datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    postJson["eventTime"] = datetime.datetime.strptime(data["datetime"][:-3], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
     postJson["unitId"] = data["Container"]
     postJson["notes"]=data["Notes"]
     postJson["unitTypeCode"]=data["Unit Code"]
@@ -123,22 +122,24 @@ def BayportPost(step):
     postJson["unitSize"] = data["SizeTypeHeight"][0:2]
     postJson["unitType"] = data["SizeTypeHeight"][5:7]
     postJson["eventCode"], postJson["eventName"] = getEvent(data["Event"])
-    postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
+    #we only need this line of code if the datetime has unprintable characters
+    #postJson["eventTime"] = ''.join(x for x in data["datetime"] if x in string.printable)
     if(postJson["eventCode"] is None):
         return
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
 
-def main():
-    current_dir=os.getcwd()
-    fileList = glob.glob(r""+current_dir+"\\ContainerInformation\\BEAU4054276Step0.json", recursive = True) #get all the json steps
-    if (not fileList):
-        return
-    fileList = [f for f in fileList if containerList in f] #set of steps for this number
-    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
-    for step in fileList:
-        BayportPost(step)
+def main(containerList):
+    for container in containerList:
+        current_dir=os.getcwd()
+        fileList = glob.glob(r""+current_dir+"\\ContainerInformation\\" + container + "Step*.json", recursive = True) #get all the json steps
+        if (not fileList):
+            return
+        fileList = [f for f in fileList if container in f] #set of steps for this number
+        fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+        for step in fileList:
+            BayportPost(step)
 
 if __name__ == "__main__":
     main(sys.argv[1])
