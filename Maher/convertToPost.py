@@ -93,42 +93,47 @@ def MaherPost(step):
         postJson["unitId"] = data["Container"]
         postJson["carrierName"]=data["Carrier Name"]
         postJson["sealNumber"]= data["Seal Number"]
-        postJson["unitSize"]= data["Unit Size"]
+        postJson["unitSize"]= data["Unit Size"][0:2]
+
+        headers = {'content-type':'application/json'}
         #The following will be stored if no out activity occurs and if a trucker event the receiver name is added
         if("InVessel Activity" in data):
             postJson["eventName"]= "Vessel Arrival"
-            postJson["eventTime"]= datetime.datetime.strptime(data["InVessel Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventTime"]= datetime.datetime.strptime(data["InVessel Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
         elif("InTruck Activity" in data):
             postJson["eventName"]= "Vessel Arrival"
-            postJson["eventTime"] =datetime.datetime.strptime(data["InTruck Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventTime"] = datetime.datetime.strptime(data["InTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
             postJson["receiverName"]= data["In_Trucker"]
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
+            print(json.dumps(postJson))
         #The above event will be overwritten as out Activities happen the latest and if a trucker event then receiver name is added
         if("OutVessel Activity" in data):
             postJson["eventName"]= "Vessel Departure"
-            postJson["eventTime"]=datetime.datetime.strptime(data["OutVessel Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventTime"]= datetime.datetime.strptime(data["OutVessel Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
         elif("OutTruck Activity" in data):
             postJson["eventName"]= "Vessel Departure"
-            postJson["eventTime"]=datetime.datetime.strptime(data["OutTruck Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventTime"]= datetime.datetime.strptime(data["OutTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
             postJson["receiverName"]= data["Out_Trucker"]
-        
-        
-        headers = {'content-type':'application/json'}
-        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        print(r)
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
 
 def main(containerList, cwd):
-    path=""
-    for x in cwd.split("\\"):
-        path+=x+"\\\\"
-    for container in containerList:
-        fileList = glob.glob(r""+path+"\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        fileList = glob.glob(cwd + "\\ContainerInformation\\"+containerList+"Step*.json", recursive = True) #get all the json steps
         if (not fileList):
-            continue
-        MaherPost(fileList[0])
+            return
+        fileList = [f for f in fileList if containerList in f] #set of steps for this number
+        fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+        for step in fileList:
+            MaherPost(step)
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])
