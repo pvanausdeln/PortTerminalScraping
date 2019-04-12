@@ -94,7 +94,6 @@ def getEvent(event):
     return(None, None)
 
 def BayportPost(step):
-    os.system("notepad.exe")
     with open(step) as jsonData:
         data = json.load(jsonData)
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
