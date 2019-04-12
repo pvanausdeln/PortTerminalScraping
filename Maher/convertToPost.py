@@ -127,10 +127,11 @@ def MaherPost(step):
             print(r)
 
 def main(containerList, cwd):
-        fileList = glob.glob(cwd + "\\ContainerInformation\\"+containerList+"Step*.json", recursive = True) #get all the json steps
+    for container in containerList:
+        fileList = glob.glob(cwd + "\\ContainerInformation\\"+container+"Step*.json", recursive = True) #get all the json steps
         if (not fileList):
-            return
-        fileList = [f for f in fileList if containerList in f] #set of steps for this number
+            continue
+        fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
             MaherPost(step)
