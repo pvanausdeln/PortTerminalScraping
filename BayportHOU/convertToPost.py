@@ -94,6 +94,7 @@ def getEvent(event):
     return(None, None)
 
 def BayportPost(step):
+    os.system("notepad.exe")
     with open(step) as jsonData:
         data = json.load(jsonData)
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
@@ -130,11 +131,14 @@ def BayportPost(step):
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
 
-def main(containerList):
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        current_dir=os.getcwd()
-        fileList = glob.glob(r""+current_dir+"\\ContainerInformation\\" + container + "Step*.json", recursive = True) #get all the json steps
-        if (not fileList):
+        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        return str(len(fileList))
+        if(not fileList):
             return
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
@@ -142,4 +146,4 @@ def main(containerList):
             BayportPost(step)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
