@@ -103,7 +103,7 @@ def MaherPost(step):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"] =datetime.datetime.strptime(data["InTruck Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
-            postJson["receiverName"]= data["Trucker"]
+            postJson["receiverName"]= data["In_Trucker"]
         #The above event will be overwritten as out Activities happen the latest and if a trucker event then receiver name is added
         if("OutVessel Activity" in data):
             postJson["eventName"]= "Vessel Departure"
@@ -113,7 +113,7 @@ def MaherPost(step):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]=datetime.datetime.strptime(data["OutTruck Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
-            postJson["receiverName"]= data["Trucker"]
+            postJson["receiverName"]= data["Out_Trucker"]
         
         
         headers = {'content-type':'application/json'}
