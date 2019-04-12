@@ -90,18 +90,45 @@ def MaherPost(step):
         postJson["state"] = "NY"
         postJson["city"] = "New York"
 
-        #TODO: all the scraped event data
+        postJson["unitId"] = data["Container"]
+        postJson["carrierName"]=data["Carrier Name"]
+        postJson["sealNumber"]= data["Seal Number"]
+        postJson["unitSize"]= data["Unit Size"]
+        #The following will be stored if no out activity occurs and if a trucker event the receiver name is added
+        if("InVessel Activity" in data):
+            postJson["eventName"]= "Vessel Arrival"
+            postJson["eventTime"]= datetime.datetime.strptime(data["InVessel Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventCode"]="VA"
+        elif("InTruck Activity" in data):
+            postJson["eventName"]= "Vessel Arrival"
+            postJson["eventTime"] =datetime.datetime.strptime(data["InTruck Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventCode"]="VA"
+            postJson["receiverName"]= data["Trucker"]
+        #The above event will be overwritten as out Activities happen the latest and if a trucker event then receiver name is added
+        if("OutVessel Activity" in data):
+            postJson["eventName"]= "Vessel Departure"
+            postJson["eventTime"]=datetime.datetime.strptime(data["OutVessel Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventCode"]= "VD"
+        elif("OutTruck Activity" in data):
+            postJson["eventName"]= "Vessel Departure"
+            postJson["eventTime"]=datetime.datetime.strptime(data["OutTruck Activity"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventCode"]= "VD"
+            postJson["receiverName"]= data["Trucker"]
+        
         
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
         print(r)
 
-def main(containerList):
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        fileList = glob.glob(str(os.getcwd())+"\\ContainerInformation\\"+container+'.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r""+path+"\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-            return
+            continue
         MaherPost(fileList[0])
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
