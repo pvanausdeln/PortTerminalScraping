@@ -137,9 +137,8 @@ def main(containerList, cwd):
         path+=x+"\\\\"
     for container in containerList:
         fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
-        return str(len(fileList))
         if(not fileList):
-            return
+            continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
