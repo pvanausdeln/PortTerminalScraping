@@ -95,10 +95,10 @@ def Seattle46Post(container, postJson, eventCode, eventName):
     print(r)
 
 
-def Seattle46(container):
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+".json") == False):
+def Seattle46(container, path):
+    if(os.path.isfile(r""+path+"ContainerInformation\\"+container+".json") == False):
         return
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal46\\ContainerInformation\\"+container+".json") as jsonData:
+    with open(r""+path+"ContainerInformation\\"+container+".json") as jsonData:
         data = json.load(jsonData)
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     postJson["unitId"] = data["Container Number"]
@@ -132,9 +132,12 @@ def Seattle46(container):
         Seattle46Post(container, postJson, "CR", "Carrier Release")
 
 
-def main(containerList):
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        Seattle46(container)
+        Seattle46(container, path)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])

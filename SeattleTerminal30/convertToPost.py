@@ -87,12 +87,12 @@ def getEvent(data, postJson):
         postJson["eventCode"] = "Empty Equipment Dispatched"
     return postJson
 
-def Seattle30Post(container):
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal30\\ContainerInformation\\"+container+"Vessel.json") == False): #is there a Vessel event
+def Seattle30Post(container, path):
+    if(os.path.isfile(r""+path+"ContainerInformation\\"+container+"Vessel.json") == False): #is there a Vessel event
         return
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal30\\ContainerInformation\\"+container+"Vessel.json") as jsonData:
+    with open(r""+path+"ContainerInformation\\"+container+"Vessel.json") as jsonData:
         data = json.load(jsonData)
     if(data["Event"] == ""):
         return
@@ -117,9 +117,9 @@ def Seattle30Post(container):
 
     loadPostJson = None
     loadData = None
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal30\\ContainerInformation\\"+container+"Load.json") == True): #is there a Load event
+    if(os.path.isfile(r""+path+"ContainerInformation\\"+container+"Load.json") == True): #is there a Load event
         loadPostJson = copy.deepcopy(postJson)
-        with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\SeattleTerminal30\\ContainerInformation\\"+container+"Load.json") as loadJsonData:
+        with open(r""+path+"ContainerInformation\\"+container+"Load.json") as loadJsonData:
             loadData = json.load(loadJsonData)
 
     postJson["eventTime"] = datetime.datetime.strptime(data["Time"][:-3] + ":00", '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
@@ -136,9 +136,12 @@ def Seattle30Post(container):
         r = requests.post(baseInfo.postURL, data = json.dumps(loadPostJson), headers = headers, verify = False)
         print(r)
 
-def main(containerList):
+def main(containerList , cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        Seattle30Post(container)
+        Seattle30Post(container, path)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
