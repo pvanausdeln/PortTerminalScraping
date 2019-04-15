@@ -116,7 +116,7 @@ def EverportPost(step):
     print(json.dumps(postJson))
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
-    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+    r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False) 
     return
 
 def main(containerList, cwd):
@@ -127,7 +127,7 @@ def main(containerList, cwd):
         fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
             continue
-        fileList = [f for f in fileList if containerList in f] #set of steps for this number
+        fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
             EverportPost(step)
