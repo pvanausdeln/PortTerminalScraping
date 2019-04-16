@@ -132,7 +132,7 @@
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="502,2049" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[Containers]">
+      <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="350,51" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[Containers]">
         <ui:ForEach.Body>
           <ActivityAction x:TypeArguments="x:Object">
             <ActivityAction.Argument>
@@ -438,7 +438,7 @@
                 </scg:Dictionary>
               </sap:WorkflowViewStateService.ViewState>
               <p:LoadScript Code="{x:Null}" DisplayName="Load Python Script" sap:VirtualizedContainerService.HintSize="314,59" sap2010:WorkflowViewState.IdRef="LoadScript_1" Result="[Script]" ScriptFile="convertToPost.py" />
-              <p:InvokeMethod Result="{x:Null}" DisplayName="Invoke Python Method" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="InvokeMethod_1" Instance="[Script]" Name="main" Parameters="[{Containers.Cast(of String)().ToArray()}]" />
+              <p:InvokeMethod Result="{x:Null}" DisplayName="Invoke Python Method" sap:VirtualizedContainerService.HintSize="314,22" sap2010:WorkflowViewState.IdRef="InvokeMethod_1" Instance="[Script]" Name="main" Parameters="[{Containers.Cast(of String)().ToArray(), Environment.CurrentDirectory.ToString}]" />
             </Sequence>
           </ActivityAction>
         </p:PythonScope.Body>
