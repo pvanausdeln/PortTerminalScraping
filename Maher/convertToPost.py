@@ -97,13 +97,13 @@ def MaherPost(step):
 
         headers = {'content-type':'application/json'}
         #The following will be stored if no out activity occurs and if a trucker event the receiver name is added
-        if("InVessel Activity" in data):
+        if("InVessel Activity" in data and data["InVessel Activity"] != ""):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"]= datetime.datetime.strptime(data["InVessel Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
-        elif("InTruck Activity" in data):
+        elif("InTruck Activity" in data and data["InTruck Activity"] != ""):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"] = datetime.datetime.strptime(data["InTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
@@ -112,13 +112,13 @@ def MaherPost(step):
             print(r)
             print(json.dumps(postJson))
         #The above event will be overwritten as out Activities happen the latest and if a trucker event then receiver name is added
-        if("OutVessel Activity" in data):
+        if("OutVessel Activity" in data and data["OutVessel Activity"] != ""):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]= datetime.datetime.strptime(data["OutVessel Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
-        elif("OutTruck Activity" in data):
+        elif("OutTruck Activity" in data and data["OutTruck Activity"] != ""):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]= datetime.datetime.strptime(data["OutTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
