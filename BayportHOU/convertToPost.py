@@ -106,12 +106,12 @@ def BayportPost(step):
     postJson["voyageNumber"] = data["Voyage"]
 		
 
-    postJson["longitude"] = -79.96
-    postJson["latitude"] = 32.90
-    postJson["location"] = "1000 Remount Rd, North Charleston, SC 29406"
+    postJson["longitude"] = -95.01
+    postJson["latitude"] = 29.61
+    postJson["location"] = "12619 Port Rd, Seabrook, TX 77586"
     postJson["country"] = "US"
-    postJson["state"] = "SC"
-    postJson["city"] = "Charleston"
+    postJson["state"] = "TX"
+    postJson["city"] = "Houston"
     postJson["eventTime"] = datetime.datetime.strptime(data["datetime"][:-3], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
     postJson["unitId"] = data["Container"]
     postJson["notes"]=data["Notes"]
