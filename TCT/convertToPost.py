@@ -119,9 +119,12 @@ def TCTPost(step):
 
 
 
-def main(containerList):
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\TCT\\ContainerInformation\\"+container+".json", recursive = True) #get all the json steps
+        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+".json", recursive = True) #get all the json steps
         if (not fileList):
             continue
         fileList = [f for f in fileList if containerList in f] #set of steps for this number
@@ -130,4 +133,4 @@ def main(containerList):
             TCTPost(step)
 
 if __name__=="__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])

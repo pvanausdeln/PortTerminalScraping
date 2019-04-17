@@ -77,9 +77,9 @@ def LBCTStep(event):
         return("FS", "Freight Release")
     return (None, None)
 
-def LBCTPost(container):
+def LBCTPost(container, path):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\LBCT\\ContainerInformation\\"+container+".json") as jsonData:
+    with open(r""+path+"ContainerInformation\\"+container+".json") as jsonData:
         data = json.load(jsonData)
     postJson["unitId"] = data["Container"]
     postJson["unitSize"] = data["Size"]
@@ -98,7 +98,7 @@ def LBCTPost(container):
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
 
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\LBCT\\ContainerInformation\\"+container+".csv") as csvData:
+    with open(r""+path+"ContainerInformation\\"+container+".csv") as csvData:
         csv_reader = csv.reader(csvData, delimiter=',')
         holdJson = copy.deepcopy(postJson)
         for row in csv_reader:
@@ -126,9 +126,12 @@ def LBCTPost(container):
 
 
 
-def main(containerList):
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        LBCTPost(container)
+        LBCTPost(container, path)
 
 if __name__=="__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])

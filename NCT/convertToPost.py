@@ -102,20 +102,27 @@ def WWTPost(step):
         postJson["country"] = "US"
         postJson["state"] = "SC"
         postJson["city"] = "Charleston"
-
+        postJson["unitId"]=data["Container"]
         postJson["unitSize"] = data["Container Type"][0:2]
         postJson["unitType"] = data["Container Type"][2:2]
         postJson["eventCode"], postJson["eventName"] = getEvent(data["Transaction"])
         postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
+        postJson["terminalCode"]= data["Terminal"]
+        postJson["unitTypeCode"]=data["Container Type"]
+        postJson["carrierName"]= data["Line"]
+        postJson["unitState"]=data["EL"]
         if(postJson["eventCode"] is None):
             return
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
         print(r)
 
-def main(containerList):
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        fileList = glob.glob(r"C:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\WWT\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
             continue
         fileList = [f for f in fileList if container in f] #set of steps for this number

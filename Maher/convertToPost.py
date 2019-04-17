@@ -131,7 +131,7 @@ def main(containerList, cwd):
     for x in cwd.split("\\"):
         path+=x+"\\\\" #just to add escape sequences for the glob method to work fine
     for container in containerList:
-        fileList = glob.glob(path + "\\ContainerInformation\\"+container+"Step*.json", recursive = True) #get all the json steps
+        fileList = glob.glob(path + "ContainerInformation\\"+container+"Step*.json", recursive = True) #get all the json steps
         
         if (not fileList):
             continue
