@@ -1,6 +1,6 @@
 {
-  "name": "EvergreenPort",
-  "description": "Evergreen Port Scraping",
+  "name": "LBCT Port",
+  "description": "LBCT Port Scraping",
   "main": "Main.xaml",
   "dependencies": {
     "Microsoft.Activities.Extensions": "[2.0.6.9]",
