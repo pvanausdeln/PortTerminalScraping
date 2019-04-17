@@ -79,13 +79,13 @@ def NewarkPost(step):
         data = json.load(jsonData)
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
-        postJson["resolvedEventSource"] = "TRAPAC LA RPA"
-        postJson["location"] = "630 W Harry Bridges Blvd, Wilmington, CA 90744"
-        postJson["city"] = "Los Angeles"
-        postJson["state"] = "CA"
+        postJson["resolvedEventSource"] = "NEWARK RPA"
+        postJson["location"] = "241 Calcutta St, Newark, NJ 07114"
+        postJson["city"] = "Newark"
+        postJson["state"] = "NJ"
         postJson["country"] = "US"
-        postJson["latitude"] = 33.77
-        postJson["longitude"] = -118.27
+        postJson["latitude"] = 40.69
+        postJson["longitude"] = -74.15
         postJson["vessel"] = data["Vessel"]
         postJson["voyageNumber"] = data["Voyage"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
