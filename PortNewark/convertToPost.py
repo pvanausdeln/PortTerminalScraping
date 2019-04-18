@@ -70,10 +70,6 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def NewarkStep(event):
-        return(None, None)
-
-
 def NewarkPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
@@ -86,23 +82,32 @@ def NewarkPost(step):
         postJson["country"] = "US"
         postJson["latitude"] = 40.69
         postJson["longitude"] = -74.15
+        postJson["unitId"] = data["Container Number"]
         postJson["vessel"] = data["Vessel"]
         postJson["voyageNumber"] = data["Voyage"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
         postJson["workOrderNumber"] = data["WONumber"]
         postJson["reportSource"] = "OceanEvent"
 
-        postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-        postJson["unitId"] = data["Container"]
-        postJson["unitSize"] = data["SIZE"]
-        postJson["unitTypeCode"] = data["HEIGHT"]
-        postJson["eventCode"], postJson["eventName"] = NewarkStep(data["Action"])
+        postJson["receiverName"] = data["Trucker"]
+        postJson["carrierCode"] = data["SSCO"]
+        postJson["unitSize"] = data["Length"].strip("'")
+
+        if(data["Customs Status"].find("RELEASED") != -1):
+            postJson["eventCode"], postJson["eventName"] = ("CT", "Customs Release")
+            postJson["eventTime"] = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+            headers = {'content-type':'application/json'}
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
+        if(data["Freight Status"].find("RELEASED") != -1):
+            postJson["eventCode"], postJson["eventName"] = ("FS", "Freight Release")
+            postJson["eventTime"] = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
+            headers = {'content-type':'application/json'}
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
         if(postJson["eventCode"] == None):
             return
-        headers = {'content-type':'application/json'}
-        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        print(r)
-        print(json.dumps(postJson))
+        
 
 
 
