@@ -19,6 +19,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -91,6 +92,7 @@ def WWTPost(step):
         
         postJson["reportSource"] = "OceanEvent"
         postJson["resolvedEventSource"] = "WWT RPA"
+        postJson["codeType"] = "UNLOCODE"
         postJson["workOrderNumber"] = data["WONumber"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
         postJson["vessel"] = data["Vessel"]

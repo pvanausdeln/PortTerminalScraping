@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -93,6 +94,7 @@ def WBCTPost(step):
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
         postJson["resolvedEventSource"] = "WBCT LA RPA"
+        postJson["codeType"] = "UNLOCODE"
         postJson["location"] = "2050 John S Gibson Blvd, San Pedro, CA 90731"
         postJson["city"] = "San Pedro"
         postJson["state"] = "CA"

@@ -17,6 +17,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -83,6 +84,7 @@ def Seattle46Post(container, postJson, eventCode, eventName):
     postJson["signedBy"] = "Gandalf"
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Seattle T46 RPA"
+    postJson["codeType"] = "UNLOCODE"
     postJson["city"] = "Seattle" #mandatory
     postJson["country"] = "US" #mandatory
     postJson["state"] = "WA"

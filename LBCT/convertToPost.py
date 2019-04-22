@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -86,6 +87,7 @@ def LBCTPost(container, path):
     postJson["unitTypeCode"] = data["Type"]
 
     postJson["reportSource"] = "OceanEvent"
+    postJson["codeType"] = "UNLOCODE"
     postJson["resolvedEventSource"] = "LBCT RPA"
     postJson["location"] = "201 Pico Ave, Long Beach, CA 90802"
     postJson["city"] = "Long Beach"

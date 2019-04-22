@@ -20,6 +20,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -146,6 +147,7 @@ def APMLAPost(container):
     postJson["longitude"] = -118.25
 
     postJson["resolvedEventSource"] = "APM LA RPA"
+    postJson["codeType"] = "UNLOCODE"
     postJson["reportSource"] = "OceanEvent"
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]

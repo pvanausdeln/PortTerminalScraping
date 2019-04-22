@@ -17,6 +17,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -104,6 +105,7 @@ def PacificLBPost(container, path):
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "PACIFIC LB RPA"
+    postJson["codeType"] = "UNLOCODE"
     postJson["city"] = "Long Beach" #mandatory
     postJson["country"] = "US" #mandatory
     postJson["state"] = "CA"

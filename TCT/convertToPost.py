@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -92,13 +93,14 @@ def TCTPost(step):
         data = json.load(jsonData)
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
-        postJson["resolvedEventSource"] = "WBCT LA RPA"
-        postJson["location"] = "2050 John S Gibson Blvd, San Pedro, CA 90731"
-        postJson["city"] = "San Pedro"
-        postJson["state"] = "CA"
+        postJson["resolvedEventSource"] = "TCT LA RPA"
+        postJson["codeType"] = "UNLOCODE"
+        postJson["location"] = "710 Port of Tacoma Rd, Tacoma, WA 98421"
+        postJson["city"] = "Tacoma"
+        postJson["state"] = "WA"
         postJson["country"] = "US"
-        postJson["latitude"] = 33.73
-        postJson["longitude"] = -118.33
+        postJson["latitude"] = 47.27
+        postJson["longitude"] = -122.41
         postJson["vessel"] = data["Vessel"]
         postJson["voyageNumber"] = data["Voyage"]
         postJson["billOfLadingNumber"] = data["BOLNumber"]
@@ -109,7 +111,7 @@ def TCTPost(step):
         postJson["carrierName"] = data["SSCO"]
         postJson["unitTypeCode"] = data["Type"]
         postJson["unitSize"] = data["Length"].replace("'", "")
-        postJson["eventCode"], postJson["eventName"], postJson["eventTime"] = WBCTStep(data["Current State"])
+        postJson["eventCode"], postJson["eventName"], postJson["eventTime"] = TCTStep(data["Current State"])
         if(postJson["eventCode"] != None):
             headers = {'content-type':'application/json'}
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)

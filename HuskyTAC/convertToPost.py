@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -99,6 +100,7 @@ def HuskyPost(step):
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
     postJson["resolvedEventSource"] = "HUSKY TAC RPA"
+    postJson["codeType"] = "UNLOCODE"
     postJson["location"] = "1101 Port of Tacoma Rd, Tacoma, WA 98421"
     postJson["city"] = "Tacoma"
     postJson["state"] = "WA"

@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -76,6 +77,7 @@ def NewarkPost(step):
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
         postJson["resolvedEventSource"] = "NEWARK RPA"
+        postJson["codeType"] = "UNLOCODE"
         postJson["location"] = "241 Calcutta St, Newark, NJ 07114"
         postJson["city"] = "Newark"
         postJson["state"] = "NJ"

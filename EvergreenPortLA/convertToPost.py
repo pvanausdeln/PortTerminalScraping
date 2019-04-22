@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -101,6 +102,7 @@ def EverportPost(step):
     postJson["sealNumber"] = data["Seal"]
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "EVRPRT LA RPA"
+    postJson["codeType"] = "UNLOCODE"
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]

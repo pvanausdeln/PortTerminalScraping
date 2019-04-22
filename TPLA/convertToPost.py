@@ -18,6 +18,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -93,6 +94,7 @@ def TraPacPost(step):
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
 
         postJson["resolvedEventSource"] = "TRAPAC LA RPA"
+        postJson["codeType"] = "UNLOCODE"
         postJson["location"] = "630 W Harry Bridges Blvd, Wilmington, CA 90744"
         postJson["city"] = "Los Angeles"
         postJson["state"] = "CA"

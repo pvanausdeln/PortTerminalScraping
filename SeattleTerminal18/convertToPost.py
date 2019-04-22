@@ -17,6 +17,7 @@ class baseInfo:
     "carrierCode": None,
     "carrierName": None,
     "city": None,
+    "codeType": None,
     "consigneeName": None,
     "containerBookingNumber": None,
     "country": None,
@@ -104,6 +105,7 @@ def Seattle18Post(container, path):
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Seattle T18 RPA"
+    postJson["codeType"] = "UNLOCODE"
     postJson["city"] = "Seattle" #mandatory
     postJson["country"] = "US" #mandatory
     postJson["state"] = "WA"
