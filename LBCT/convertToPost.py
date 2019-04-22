@@ -7,7 +7,7 @@ import datetime
 import csv
 
 class baseInfo:
-    postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
+    postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/bv/shipmentevents"
 
     shipmentEventBase = {
     "associatedAssetSize": None,

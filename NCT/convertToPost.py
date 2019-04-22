@@ -8,7 +8,7 @@ import glob
 import string
 
 class baseInfo:
-    postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/shipmentevents"
+    postURL = "https://demo-api.iasdispatchmanager.com:8502/v1/bv/shipmentevents"
 
     shipmentEventBase = {
     "associatedAssetSize": None,
@@ -82,7 +82,7 @@ def getEvent(event):
         return("OA", "OUTGATE")
     return(None, None)
 
-def WWTPost(step):
+def NCTPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
         if(data["Terminal"].find("NCT") == -1):
@@ -104,7 +104,7 @@ def WWTPost(step):
         postJson["city"] = "Charleston"
         postJson["unitId"]=data["Container"]
         postJson["unitSize"] = data["Container Type"][0:2]
-        postJson["unitType"] = data["Container Type"][2:2]
+        postJson["unitTypeCode"] = data["Container Type"][2:2]
         postJson["eventCode"], postJson["eventName"] = getEvent(data["Transaction"])
         postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
         postJson["terminalCode"]= data["Terminal"]
@@ -115,6 +115,7 @@ def WWTPost(step):
             return
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+        print(json.dumps(postJson))
         print(r)
 
 def main(containerList, cwd):
@@ -128,7 +129,7 @@ def main(containerList, cwd):
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-            WWTPost(step)
+            NCTPost(step)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
