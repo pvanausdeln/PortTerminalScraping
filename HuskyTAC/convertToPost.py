@@ -121,7 +121,7 @@ def HuskyPost(step):
     postJson["unitType"] = data["SzTpHt"][2:4]
     postJson["unitSize"] = data["SzTpHt"][:2]
     postJson["carrierCode"]  = data["Carrier"]
-    postJson["originatorId"]= int(data["POL"])
+    #postJson["originatorId"]= int(data["POL"])
 
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
