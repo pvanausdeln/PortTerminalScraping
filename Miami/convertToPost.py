@@ -72,6 +72,9 @@ class baseInfo:
     }
 
 def EverportPost(step):
+    postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+    with open(step) as jsonData:
+        data = json.load(jsonData)
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Miami RPA"
     postJson["codeType"] = "UNLOCODE"
