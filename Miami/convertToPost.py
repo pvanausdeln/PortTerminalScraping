@@ -71,7 +71,7 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def EverportPost(step):
+def MiamiPost(step):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     with open(step) as jsonData:
         data = json.load(jsonData)
@@ -99,13 +99,13 @@ def main(containerList, cwd):
     for x in cwd.split("\\"):
         path+=x+"\\\\"
     for container in containerList:
-        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
             continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-            EverportPost(step)
+            MiamiPost(step)
 
 if __name__=="__main__":
     main(sys.argv[1], sys.argv[2])
