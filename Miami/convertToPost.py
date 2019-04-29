@@ -74,25 +74,25 @@ def Event(data_event):
     if(data_event.find("LOAD") != -1):
         return("Loaded on Truck", "AM")
     elif(data_event.find("EMPTY IN") != -1):
-        return("In-Gate", "I")
+        return("INGATE", "I")
     elif(data_event.find("FULL OUT") != -1):
-        return("Out-Gate", "OA")
+        return("OUTGATE", "OA")
     elif(data_event.find("DISCHARGE") != -1):
         return("Unloaded from Vessel", "UV")
     elif(data_event.find("DAMAGE") != -1):
-        return("Bad Order (Inoperative or Damaged)", "B")
+        return("BAD_ORDER", "B")
     elif(data_event.find("SEALCHANGE") != -1):
         return("Seals Altered", "SC")
     elif(data_event.find("SEALRECORD") != -1):
         return("Seals Altered", "SC")
     elif(data_event.find("YARD SHIFT") != -1):
-        return("Intra-Terminal Movement", "TM")
+        return("Intra terminal movement", "TM")
     elif(data_event.find("RAILUNLOAD") != -1):
-        return("Unloaded from a Rail Car", "UR")
+        return("UNLOADED_FROM_RAIL", "UR")
     elif(data_event.find("FULL IN") != -1):
-        return("In-Gate", "I")
+        return("INGATE", "I")
     elif(data_event.find("RAIL LOAD") != -1):
-        return("Loaded on Rail", "AL")
+        return("LOADED_ON_RAIL", "AL")
     elif(data_event.find("RAIL ARRIVE") != -1):
         return("Rail Arrival at Destination Intermodal Ramp", "AR")
     elif(data_event.find("RAIL DEPART") != -1):
