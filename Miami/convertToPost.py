@@ -71,31 +71,31 @@ class baseInfo:
     "workOrderNumber": None
     }
 def Event(data_event):
-    if(data_event.find("Load")):
+    if(data_event.find("LOAD") != -1):
         return("Loaded on Truck", "AM")
-    elif(data_event.find("Empty in")):
+    elif(data_event.find("EMPTY IN") != -1):
         return("In-Gate", "I")
-    elif(data_event.find("Full out")):
+    elif(data_event.find("FULL OUT") != -1):
         return("Out-Gate", "OA")
-    elif(data_event.find("Discharge")):
+    elif(data_event.find("DISCHARGE") != -1):
         return("Unloaded from Vessel", "UV")
-    elif(data_event.find("Damage")):
+    elif(data_event.find("DAMAGE") != -1):
         return("Bad Order (Inoperative or Damaged)", "B")
-    elif(data_event.find("Sealchange")):
+    elif(data_event.find("SEALCHANGE") != -1):
         return("Seals Altered", "SC")
-    elif(data_event.find("Sealrecord")):
+    elif(data_event.find("SEALRECORD") != -1):
         return("Seals Altered", "SC")
-    elif(data_event.find("Yard Shift")):
+    elif(data_event.find("YARD SHIFT") != -1):
         return("Intra-Terminal Movement", "TM")
-    elif(data_event.find("RailUnload")):
+    elif(data_event.find("RAILUNLOAD") != -1):
         return("Unloaded from a Rail Car", "UR")
-    elif(data_event.find("Full In")):
+    elif(data_event.find("FULL IN") != -1):
         return("In-Gate", "I")
-    elif(data_event.find("Rail Load")):
+    elif(data_event.find("RAIL LOAD") != -1):
         return("Loaded on Rail", "AL")
-    elif(data_event.find("Rail Arrive")):
+    elif(data_event.find("RAIL ARRIVE") != -1):
         return("Rail Arrival at Destination Intermodal Ramp", "AR")
-    elif(data_event.find("Rail Depart")):
+    elif(data_event.find("RAIL DEPART") != -1):
         return("Rail Departure from Origin Intermodal Ramp", "RL")
     return(None, None)
         
@@ -106,27 +106,27 @@ def MiamiPost(step):
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Miami RPA"
     postJson["codeType"] = "UNLOCODE"
-    postJson["workOrderNumber"] = data["WON"]
-    postJson["billOfLadingNumber"] = data["BOL"]
-    postJson["vessel"] = data["Vessel"]
-    postJson["voyageNumber"] = data["Voyage"]
+    postJson["workOrderNumber"] = data.get("WON")
+    postJson["billOfLadingNumber"] = data.get("BOL")
+    postJson["vessel"] = data.get("Vessel")
+    postJson["voyageNumber"] = data.get("Voyage")
     postJson["longitude"] = -80.16
     postJson["latitude"] = 25.77
     postJson["location"] = "2299 Port Blvd, Miami, FL 33132"
     postJson["country"] = "US"
     postJson["state"] = "FL"
     postJson["city"] = "Miami"
-    postJson["unitId"]= data["Container"]
-    postJson["location"]=data["Location"]
-    postJson["terminalCode"]=data["Terminal"]
-    postJson["receiverCode"]=data["Trucker"]
-    postJson["carrierCode"]=data["Shipping Line"]
-    postJson["unitSize"]=data["Size"]
-    postJson["unitTypeCode"]=data["Type"]
-    postJson["carrierCode"]=data["Operator"]
-    postJson["notes"]=data["Notes"]
-    postJson["eventTime"]=datetime.datetime.strptime(data["Date"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-    postJson["eventName"], postJson["eventCode"] = Event(data["Event"])
+    postJson["unitId"]= data.get("Container")
+    postJson["location"]=data.get("Location")
+    postJson["terminalCode"]=data.get("Terminal")
+    postJson["receiverCode"]=data.get("Trucker")
+    postJson["carrierCode"]=data.get("Shipping Line")
+    postJson["unitSize"]=data.get("Size")
+    postJson["unitTypeCode"]=data.get("Type")
+    postJson["carrierCode"]=data.get("Operator")
+    postJson["notes"]=data.get("Notes")
+    postJson["eventTime"]=datetime.datetime.strptime(data.get("Date"), '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    postJson["eventName"], postJson["eventCode"] = Event(data.get("Event"))
     if(postJson["eventCode"] is None):
         return
     print(json.dumps(postJson))
