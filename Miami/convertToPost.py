@@ -126,11 +126,7 @@ def MiamiPost(step):
     postJson["carrierCode"]=data["Operator"]
     postJson["notes"]=data["Notes"]
     postJson["eventTime"]=datetime.datetime.strptime(data["Date"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-    if(data["Customs"].find("Released")):
-        postJson["eventName"]="Customs Released"
-        postJson["eventCode"]="CT"
-    else:
-        postJson["eventName"], postJson["eventCode"] = Event(data["Event"])
+    postJson["eventName"], postJson["eventCode"] = Event(data["Event"])
     if(postJson["eventCode"] is None):
         return
     print(json.dumps(postJson))
