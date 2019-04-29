@@ -70,7 +70,35 @@ class baseInfo:
     "voyageNumber": None,
     "workOrderNumber": None
     }
-
+def Event(data_event):
+    if(data_event.find("Load")):
+        return("Loaded on Truck", "AM")
+    elif(data_event.find("Empty in")):
+        return("In-Gate", "I")
+    elif(data_event.find("Full out")):
+        return("Out-Gate", "OA")
+    elif(data_event.find("Discharge")):
+        return("Unloaded from Vessel", "UV")
+    elif(data_event.find("Damage")):
+        return("Bad Order (Inoperative or Damaged)", "B")
+    elif(data_event.find("Sealchange")):
+        return("Seals Altered", "SC")
+    elif(data_event.find("Sealrecord")):
+        return("Seals Altered", "SC")
+    elif(data_event.find("Yard Shift")):
+        return("Intra-Terminal Movement", "TM")
+    elif(data_event.find("RailUnload")):
+        return("Unloaded from a Rail Car", "UR")
+    elif(data_event.find("Full In")):
+        return("In-Gate", "I")
+    elif(data_event.find("Rail Load")):
+        return("Loaded on Rail", "AL")
+    elif(data_event.find("Rail Arrive")):
+        return("Rail Arrival at Destination Intermodal Ramp", "AR")
+    elif(data_event.find("Rail Depart")):
+        return("Rail Departure from Origin Intermodal Ramp", "RL")
+    return(None, None)
+        
 def MiamiPost(step):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     with open(step) as jsonData:
@@ -88,11 +116,28 @@ def MiamiPost(step):
     postJson["country"] = "US"
     postJson["state"] = "FL"
     postJson["city"] = "Miami"
+    postJson["unitId"]= data["Container"]
+    postJson["location"]=data["Location"]
+    postJson["terminalCode"]=data["Terminal"]
+    postJson["receiverCode"]=data["Trucker"]
+    postJson["carrierCode"]=data["Shipping Line"]
+    postJson["unitSize"]=data["Size"]
+    postJson["unitTypeCode"]=data["Type"]
+    postJson["carrierCode"]=data["Operator"]
+    postJson["notes"]=data["Notes"]
+    postJson["eventTime"]=datetime.datetime.strptime(data["Date"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+    if(data["Customs"].find("Released")):
+        postJson["eventName"]="Customs Released"
+        postJson["eventCode"]="CT"
+    else:
+        postJson["eventName"], postJson["eventCode"] = Event(data["Event"])
+    if(postJson["eventCode"] is None):
+        return
     print(json.dumps(postJson))
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-    return
+    
 
 def main(containerList, cwd):
     path=""
