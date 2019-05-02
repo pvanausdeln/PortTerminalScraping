@@ -82,7 +82,7 @@ def TTILongBeachPost(container, postJson, eventCode, eventName):
     postJson["eventName"] = eventName
     postJson["eventCode"] = eventCode
     postJson["reportSource"] = "OceanEvent"
-    postJson["resolvedEventSource"] = "TTI Long Beach RPA"
+    postJson["resolvedEventSource"] = "TTI LB RPA"
     postJson["codeType"] = "UNLOCODE"
     postJson["city"] = "Long Beach" #mandatory
     postJson["country"] = "US" #mandatory
@@ -109,7 +109,6 @@ def TTILongBeach(container, path):
     postJson["eventTime"] = data["Appt Time"].split("~")[0]+":00" if (data["Appt Time"].find("~") != -1) else datetime.datetime.now().strftime('%m-%d-%Y %H:%M:%S')
     postJson["unitSize"] = getSize(data["Container Type/Length/Height"])
     postJson["reasonName"] = data["Miscellaneous Hold Reason"]
-    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["workOrderNumber"] = data["WONumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["terminalCode"] = "TTI Long Beach"
