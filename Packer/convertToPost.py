@@ -117,7 +117,7 @@ def PackerPost(step):
     if(postJson["eventCode"] is None):
         return
     if(postJson["eventCode"].find("AE") != -1):
-        postJson["eventTime"] = data.get("Last Move/Datetime").split(",")[1].strip() + "00:00:00"
+        postJson["eventTime"] = data.get("Last Move/Datetime").split(",")[1].strip() + " 00:00:00"
     else:
         postJson["eventTime"] = data.get("Last Move/Datetime").split(",")[1].strip() + ":00"
     print(json.dumps(postJson))
