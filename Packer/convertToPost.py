@@ -71,26 +71,36 @@ class baseInfo:
     "workOrderNumber": None
     }
 def Event(data_event):
-    
+    if(data_event.find("Gate-out") != -1):
+        return("OUTGATE", "OA")
+    elif(data_event.find("Discharged") != -1):
+        return("Unloaded From Vessel", "UV")
+    elif(data_event.find("Vessel Load") != -1):
+        return("Loaded on Vessel", "AE")
     return(None, None)
+
+def getType(typeDesc):
+    if(typeDesc.find("High-cube") != -1):
+        return "HC"
+    return None
         
 def PackerPost(step):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     with open(step) as jsonData:
         data = json.load(jsonData)
     postJson["reportSource"] = "OceanEvent"
-    postJson["resolvedEventSource"] = "Miami RPA"
+    postJson["resolvedEventSource"] = "Packer RPA"
     postJson["codeType"] = "UNLOCODE"
     postJson["workOrderNumber"] = data.get("WON")
     postJson["billOfLadingNumber"] = data.get("BOL")
     postJson["vessel"] = data.get("Vessel")
     postJson["voyageNumber"] = data.get("Voyage")
-    postJson["longitude"] = -80.16
-    postJson["latitude"] = 25.77
-    postJson["location"] = "2299 Port Blvd, Miami, FL 33132"
+    postJson["longitude"] = -75.14
+    postJson["latitude"] = 39.91
+    postJson["location"] = "3301 S Christopher Columbus Blvd, Philadelphia, PA 19148"
     postJson["country"] = "US"
-    postJson["state"] = "FL"
-    postJson["city"] = "Miami"
+    postJson["state"] = "PA"
+    postJson["city"] = "Philadelphia"
     postJson["unitId"]= data.get("Container")
     postJson["location"]=data.get("Location")
     postJson["terminalCode"]=data.get("Terminal")
@@ -100,10 +110,16 @@ def PackerPost(step):
     postJson["unitTypeCode"]=data.get("Type")
     postJson["carrierCode"]=data.get("Operator")
     postJson["notes"]=data.get("Notes")
-    postJson["eventTime"]=datetime.datetime.strptime(data.get("Date"), '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-    postJson["eventName"], postJson["eventCode"] = Event(data.get("Event"))
+    postJson["unitState"] = data.get("Description").split(",")[0]
+    postJson["unitTypeCode"] = data.get("Description").split(",")[3] + getType(data.get("Description").split(",")[2])
+    postJson["unitSize"] = data.get("Description").split(",")[3].strip()
+    postJson["eventName"], postJson["eventCode"] = Event(data.get("Last Move/Datetime").split(",")[0])
     if(postJson["eventCode"] is None):
         return
+    if(postJson["eventCode"].find("AE") != -1):
+        postJson["eventTime"] = data.get("Last Move/Datetime").split(",")[1].strip() + "00:00:00"
+    else:
+        postJson["eventTime"] = data.get("Last Move/Datetime").split(",")[1].strip() + ":00"
     print(json.dumps(postJson))
     #TODO: config file for post urls
     headers = {'content-type':'application/json'}
