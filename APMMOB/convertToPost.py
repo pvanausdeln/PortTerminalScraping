@@ -140,13 +140,13 @@ def APMLAPost(container, path):
     postJson["unitType"] = data["Size/Type/Height"].split("/")[1]
 
     postJson["location"] = "901 Ezra Trice Blvd, Mobile, AL 36603"
-    postJson["city"] = "Los Angeles"
-    postJson["state"] = "CA"
+    postJson["city"] = "Mobile"
+    postJson["state"] = "AL"
     postJson["country"] = "US"
-    postJson["latitude"] = 30.66
+    postJson["latitude"] = 30.67
     postJson["longitude"] = -88.04
 
-    postJson["resolvedEventSource"] = "APM LA RPA"
+    postJson["resolvedEventSource"] = "APM MOB RPA"
     postJson["codeType"] = "UNLOCODE"
     postJson["reportSource"] = "OceanEvent"
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]

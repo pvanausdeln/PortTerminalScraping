@@ -141,12 +141,12 @@ def APMLAPost(container, path):
 
     postJson["location"] = "5080 McLester Street, Elizabeth, NJ 07207"
     postJson["city"] = "Elizabeth"
-    postJson["state"] = "CA"
+    postJson["state"] = "NJ"
     postJson["country"] = "US"
     postJson["latitude"] = 40.66
     postJson["longitude"] = -74.15
 
-    postJson["resolvedEventSource"] = "APM LA RPA"
+    postJson["resolvedEventSource"] = "APM NY RPA"
     postJson["codeType"] = "UNLOCODE"
     postJson["reportSource"] = "OceanEvent"
     postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
