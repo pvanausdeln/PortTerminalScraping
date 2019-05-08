@@ -109,6 +109,8 @@ def NCTPost(step):
         postJson["unitTypeCode"] = data["Container Type"][2:2]
         postJson["eventCode"], postJson["eventName"] = getEvent(data["Transaction"])
         postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
+        postJson["eventTime"] = ' '.join(postJson["eventTime"].split())
+        postJson["eventTime"] = datetime.datetime.strptime(postJson["eventTime"], '%m-%d-%y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
         postJson["terminalCode"]= data["Terminal"]
         postJson["unitTypeCode"]=data["Container Type"]
         postJson["carrierName"]= data["Line"]

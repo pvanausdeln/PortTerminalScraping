@@ -113,25 +113,23 @@ def WWTPost(step):
         postJson["unitType"] = data["Container Type"][2:2]
         postJson["eventCode"], postJson["eventName"] = getEvent(data["Transaction"])
         postJson["eventTime"] = ''.join(x for x in data["Datetime"] if x in string.printable)
+        postJson["eventTime"] = ' '.join(postJson["eventTime"].split())
+        postJson["eventTime"] = datetime.datetime.strptime(postJson["eventTime"], '%m-%d-%y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
 
         if(postJson["eventCode"] is None):
             return
         headers = {'content-type':'application/json'}
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        print(r)
+        print(json.dumps(postJson))
 
-def main(containerList, cwd):
-    path=""
-    for x in cwd.split("\\"):
-        path+=x+"\\\\"
-    for container in containerList:
-        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+def main(container):
+        fileList = glob.glob(os.getcwd()+"\\ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
         if (not fileList):
-            continue
+            return
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
             WWTPost(step)
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1])
