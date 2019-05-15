@@ -119,7 +119,7 @@
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
     </ui:OpenBrowser>
-    <Sequence sap:VirtualizedContainerService.HintSize="200,51" sap2010:WorkflowViewState.IdRef="Sequence_10">
+    <Sequence sap:VirtualizedContainerService.HintSize="372,558" sap2010:WorkflowViewState.IdRef="Sequence_10">
       <Sequence.Variables>
         <Variable x:TypeArguments="p:PythonObject" Name="Script" />
       </Sequence.Variables>
@@ -129,7 +129,7 @@
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="416,51" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[Containers]">
+      <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="352,837" sap2010:WorkflowViewState.IdRef="ForEach`1_1" Values="[Containers]">
         <ui:ForEach.Body>
           <ActivityAction x:TypeArguments="x:Object">
             <ActivityAction.Argument>
@@ -170,7 +170,7 @@
                   <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Selector="&lt;html app='chrome.exe' title='Trucker Portal - Cargo Search' /&gt;" TimeoutMS="3000" WaitForReady="INTERACTIVE" />
                 </ui:ImageFound.Target>
               </ui:ImageFound>
-              <If Condition="[elementExists]" sap:VirtualizedContainerService.HintSize="314,51" sap2010:WorkflowViewState.IdRef="If_6">
+              <If Condition="[elementExists]" sap:VirtualizedContainerService.HintSize="464,208" sap2010:WorkflowViewState.IdRef="If_6">
                 <sap:WorkflowViewStateService.ViewState>
                   <scg:Dictionary x:TypeArguments="x:String, x:Object">
                     <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -314,7 +314,7 @@
                         <InArgument x:TypeArguments="scg:Dictionary(x:String, x:String)">[new Dictionary(Of String, String)]</InArgument>
                       </Assign.Value>
                     </Assign>
-                    <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_37" Key="Container" Value="[ExtractDataTable.Rows(1).Item(0).ToString]" />
+                    <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_37" Key="Container" Value="[item.ToString]" />
                     <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_38" Key="Size" Value="[ExtractDataTable.Rows(2).Item(0).ToString.Substring(0,2)]" />
                     <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_39" Key="Type" Value="[ExtractDataTable.Rows(2).Item(0).ToString.Substring(2,2)]" />
                     <maes:AddToDictionary x:TypeArguments="x:String, x:String" Dictionary="[infoArray]" DisplayName="Add to dictionary" sap:VirtualizedContainerService.HintSize="464,138" sap2010:WorkflowViewState.IdRef="AddToDictionary`2_40" Key="Available" Value="[ExtractDataTable.Rows(3).Item(0).ToString]" />
@@ -363,7 +363,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </ui:ForEach>
-      <p:PythonScope DisplayName="Python Scope" sap:VirtualizedContainerService.HintSize="416,281" sap2010:WorkflowViewState.IdRef="PythonScope_1" Path="C:\Python36" TargetPlatform="x64">
+      <p:PythonScope DisplayName="Python Scope" sap:VirtualizedContainerService.HintSize="350,281" sap2010:WorkflowViewState.IdRef="PythonScope_1" Path="C:\Python36" TargetPlatform="x64">
         <p:PythonScope.Body>
           <ActivityAction x:TypeArguments="x:Object">
             <ActivityAction.Argument>
@@ -387,18 +387,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </p:PythonScope>
-      <ui:CommentOut DisplayName="Comment Out" sap:VirtualizedContainerService.HintSize="416,224" sap2010:WorkflowViewState.IdRef="CommentOut_6">
-        <ui:CommentOut.Body>
-          <Sequence DisplayName="Ignored Activities" sap:VirtualizedContainerService.HintSize="222,146" sap2010:WorkflowViewState.IdRef="Sequence_80">
-            <sap:WorkflowViewStateService.ViewState>
-              <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-              </scg:Dictionary>
-            </sap:WorkflowViewStateService.ViewState>
-            <ui:CloseTab Browser="[chromeBrowser]" DisplayName="Close Tab" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="CloseTab_2" />
-          </Sequence>
-        </ui:CommentOut.Body>
-      </ui:CommentOut>
+      <ui:CloseTab Browser="[chromeBrowser]" DisplayName="Close Tab" sap:VirtualizedContainerService.HintSize="350,22" sap2010:WorkflowViewState.IdRef="CloseTab_2" />
     </Sequence>
   </Sequence>
 </Activity>
