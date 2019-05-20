@@ -73,6 +73,8 @@ class baseInfo:
 def Event(data_event):
     if(data_event.find("Gate-out") != -1):
         return("OUTGATE", "OA")
+    elif(data_event.find("Gate-In") != -1):
+        return("INGATE", "I")
     elif(data_event.find("Discharged") != -1):
         return("Unloaded From Vessel", "UV")
     elif(data_event.find("Vessel Load") != -1):
@@ -111,9 +113,12 @@ def PackerPost(step):
     postJson["carrierCode"]=data.get("Operator")
     postJson["notes"]=data.get("Notes")
     postJson["unitState"] = data.get("Description").split(",")[0]
-    postJson["unitTypeCode"] = data.get("Description").split(",")[3] + getType(data.get("Description").split(",")[2])
+    try:
+        postJson["unitTypeCode"] = data.get("Description").split(",")[3] + getType(data.get("Description").split(",")[2])
+        postJson["eventName"], postJson["eventCode"] = Event(data.get("Last Move/Datetime").split(",")[0])
+    except:
+        return
     postJson["unitSize"] = data.get("Description").split(",")[3].strip()
-    postJson["eventName"], postJson["eventCode"] = Event(data.get("Last Move/Datetime").split(",")[0])
     if(postJson["eventCode"] is None):
         return
     if(postJson["eventCode"].find("AE") != -1):
