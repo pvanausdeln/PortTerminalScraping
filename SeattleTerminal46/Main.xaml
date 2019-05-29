@@ -121,8 +121,8 @@
             </sap:WorkflowViewStateService.ViewState>
             <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="799,578" sap2010:WorkflowViewState.IdRef="Sequence_16">
               <Sequence.Variables>
-                <Variable x:TypeArguments="x:String" Default="edray" Name="SeattleTTIUsername" />
-                <Variable x:TypeArguments="x:String" Default="edray1" Name="SeattleTTIPassword" />
+                <Variable x:TypeArguments="x:String" Default="EDRAY" Name="SeattleTTIUsername" />
+                <Variable x:TypeArguments="x:String" Default="EDRAY1" Name="SeattleTTIPassword" />
               </Sequence.Variables>
               <sap:WorkflowViewStateService.ViewState>
                 <scg:Dictionary x:TypeArguments="x:String, x:Object">
