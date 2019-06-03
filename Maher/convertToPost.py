@@ -89,8 +89,8 @@ def MaherPost(step):
         postJson["latitude"] = 40.66
         postJson["location"] = "1210 Corbin St, Elizabeth, NJ 07201"
         postJson["country"] = "US"
-        postJson["state"] = "NY"
-        postJson["city"] = "New York"
+        postJson["state"] = "NJ"
+        postJson["city"] = "Elizabeth"
 
         postJson["unitId"] = data["Container"]
         postJson["carrierName"]=data["Carrier Name"]

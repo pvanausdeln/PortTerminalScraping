@@ -97,7 +97,7 @@ def TraPacPost(step):
         postJson["codeType"] = "UNLOCODE"
         postJson["location"] = "9834 New Berlin Road, Jacksonville, FL 32226"
         postJson["city"] = "Jacksonville"
-        postJson["state"] = "CA"
+        postJson["state"] = "FL"
         postJson["country"] = "US"
         postJson["latitude"] = 30.40
         postJson["longitude"] = -82.56
