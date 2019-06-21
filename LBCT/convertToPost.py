@@ -80,50 +80,43 @@ def LBCTStep(event):
 
 def LBCTPost(container, path):
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-    if os.path.isfile(path+"ContainerInformation\\"+container+".json"):
-        with open(r""+path+"ContainerInformation\\"+container+".json") as jsonData:
-            data = json.load(jsonData)
-        postJson["unitId"] = data["Container"]
-        postJson["unitSize"] = data["Size"]
-        postJson["unitTypeCode"] = data["Type"]
+    fileList = glob.glob(path + "ContainerInformation\\"+container+"Step*.json", recursive = True)
+	if (not fileList):
+		return
+		fileList = [f for f in fileList if container in f] #set of steps for this number
+        fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+        for step in fileList:
+			with open(r""+path+"ContainerInformation\\"+container+".json") as jsonData:
+				data = json.load(jsonData)
+			postJson["unitId"] = data["Container"]
+			postJson["unitSize"] = data["Size"]
+			postJson["unitTypeCode"] = data["Type"]
 
-        postJson["reportSource"] = "OceanEvent"
-        postJson["codeType"] = "UNLOCODE"
-        postJson["resolvedEventSource"] = "LBCT RPA"
-        postJson["location"] = "201 Pico Ave, Long Beach, CA 90802"
-        postJson["city"] = "Long Beach"
-        postJson["state"] = "CA"
-        postJson["country"] = "US"
-        postJson["latitude"] = 33.77
-        postJson["longitude"] = -118.21
-        postJson["workOrderNumber"] = data["WONumber"]
-        postJson["billOfLadingNumber"] = data["BOLNumber"]
-        postJson["vessel"] = data["Vessel"]
-        postJson["voyageNumber"] = data["Voyage"]
-        with open(r""+path+"ContainerInformation\\"+container+".csv") as csvData:
-            csv_reader = csv.reader(csvData, delimiter=',')
-            holdJson = copy.deepcopy(postJson)
-            for row in csv_reader:
-                if(row[1] == "APPLIED"):
-                    continue
-                holdJson["eventCode"], holdJson["eventName"] = LBCTStep(row[0])
-                if(holdJson["eventCode"] is None):
-                    continue
-                holdJson["eventTime"] = datetime.datetime.strptime(row[1], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
-                headers = {'content-type':'application/json'}
-                r = requests.post(baseInfo.postURL, data = json.dumps(holdJson), headers = headers, verify = False)
-        if(data["Discharged"].find("Actual") == -1):
-            return
-        elif(data["Available for Pickup"].find("Yes") != -1):
-            postJson["eventCode"], postJson["eventName"] = ("APL", "Arrived Pickup Location")
-            postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
-            headers = {'content-type':'application/json'}
-            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        postJson["eventCode"], postJson["eventName"] = ("DI", "Discharged")
-        postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
-        headers = {'content-type':'application/json'}
-        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        return
+			postJson["reportSource"] = "OceanEvent"
+			postJson["codeType"] = "UNLOCODE"
+			postJson["resolvedEventSource"] = "LBCT RPA"
+			postJson["location"] = "201 Pico Ave, Long Beach, CA 90802"
+			postJson["city"] = "Long Beach"
+			postJson["state"] = "CA"
+			postJson["country"] = "US"
+			postJson["latitude"] = 33.77
+			postJson["longitude"] = -118.21
+			postJson["workOrderNumber"] = data["WONumber"]
+			postJson["billOfLadingNumber"] = data["BOLNumber"]
+			postJson["vessel"] = data["Vessel"]
+			postJson["voyageNumber"] = data["Voyage"]
+			if(data["Discharged"].find("Actual") == -1):
+				return
+			elif(data["Available for Pickup"].find("Yes") != -1):
+				postJson["eventCode"], postJson["eventName"] = ("APL", "Arrived Pickup Location")
+				postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+				headers = {'content-type':'application/json'}
+				r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+			postJson["eventCode"], postJson["eventName"] = ("DI", "Discharged")
+			postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+			headers = {'content-type':'application/json'}
+			r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+			return
     else:
         return
 
