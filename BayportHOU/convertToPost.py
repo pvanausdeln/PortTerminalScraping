@@ -98,7 +98,7 @@ def BayportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-        
+
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "BAYPORT RPA"
     postJson["codeType"] = "UNLOCODE"
@@ -106,7 +106,7 @@ def BayportPost(step):
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
-		
+
 
     postJson["longitude"] = -95.01
     postJson["latitude"] = 29.61
@@ -124,7 +124,7 @@ def BayportPost(step):
     postJson["unitSize"] = data["SizeTypeHeight"][0:2]
     postJson["unitType"] = data["SizeTypeHeight"][5:7]
     postJson["eventCode"], postJson["eventName"] = getEvent(data["Event"])
-    #we only need this line of code if the datetime has unprintable characters
+        #we only need this line of code if the datetime has unprintable characters
     #postJson["eventTime"] = ''.join(x for x in data["datetime"] if x in string.printable)
     if(postJson["eventCode"] is None):
         return
