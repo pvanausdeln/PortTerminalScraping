@@ -91,8 +91,8 @@ def EverportPost(step):
         postJson["eventName"] = "INGATE"
     elif(data["Move Type"] == "Empty Out"):
         postJson["eventCode"] = "EE"
-        postJson["eventCode"] = "Empty Equipment Dispatched"
-    
+        postJson["eventName"] = "Empty Equipment Dispatched"
+
     postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
     if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1: #it is the current year
         return

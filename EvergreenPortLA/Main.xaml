@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Main" mva:VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="1017,4156" sap2010:WorkflowViewState.IdRef="Main_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:maes="clr-namespace:Microsoft.Activities.Extensions.Statements;assembly=Microsoft.Activities.Extensions" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:p="http://schemas.uipath.com/workflow/activities/python" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing" xmlns:sd1="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Main" mva:VisualBasic.Settings="{x:Null}" sap:VirtualizedContainerService.HintSize="586,5050" sap2010:WorkflowViewState.IdRef="Main_1" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:maes="clr-namespace:Microsoft.Activities.Extensions.Statements;assembly=Microsoft.Activities.Extensions" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:p="http://schemas.uipath.com/workflow/activities/python" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing" xmlns:sd1="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
       <x:String>System.Activities</x:String>
@@ -55,7 +55,7 @@
       <AssemblyReference>System.Collections.Immutable</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap:VirtualizedContainerService.HintSize="977,4076" sap2010:WorkflowViewState.IdRef="Sequence_4">
+  <Sequence sap:VirtualizedContainerService.HintSize="546,4930" sap2010:WorkflowViewState.IdRef="Sequence_4">
     <Sequence.Variables>
       <Variable x:TypeArguments="ui:Browser" Name="chromeBrowser" />
       <Variable x:TypeArguments="x:String" Name="jsonString" />
@@ -73,7 +73,7 @@
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:ExcelApplicationScope Password="{x:Null}" DisplayName="Excel Application Scope" sap:VirtualizedContainerService.HintSize="955,51" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1" WorkbookPath="Test.xlsx">
+    <ui:ExcelApplicationScope Password="{x:Null}" DisplayName="Excel Application Scope" sap:VirtualizedContainerService.HintSize="524,787" sap2010:WorkflowViewState.IdRef="ExcelApplicationScope_1" WorkbookPath="Test.xlsx">
       <ui:ExcelApplicationScope.Body>
         <ActivityAction x:TypeArguments="ui:WorkbookApplication">
           <ActivityAction.Argument>
@@ -96,12 +96,12 @@
       </ui:ExcelApplicationScope.Body>
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
-          <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
     </ui:ExcelApplicationScope>
-    <ui:OpenBrowser BrowserType="Chrome" DisplayName="Open Browser" Hidden="False" sap:VirtualizedContainerService.HintSize="955,51" sap2010:WorkflowViewState.IdRef="OpenBrowser_1" NewSession="True" Private="False" UiBrowser="[chromeBrowser]" Url="https://www.etslink.com/">
+    <ui:OpenBrowser BrowserType="Chrome" DisplayName="Open Browser" Hidden="False" sap:VirtualizedContainerService.HintSize="524,114" sap2010:WorkflowViewState.IdRef="OpenBrowser_1" NewSession="True" Private="False" UiBrowser="[chromeBrowser]" Url="https://www.etslink.com/">
       <ui:OpenBrowser.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
@@ -111,12 +111,12 @@
       </ui:OpenBrowser.Body>
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
-          <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
     </ui:OpenBrowser>
-    <Sequence sap:VirtualizedContainerService.HintSize="955,3770" sap2010:WorkflowViewState.IdRef="Sequence_10">
+    <Sequence sap:VirtualizedContainerService.HintSize="524,3825" sap2010:WorkflowViewState.IdRef="Sequence_10">
       <Sequence.Variables>
         <Variable x:TypeArguments="x:Int32" Name="index" />
         <Variable x:TypeArguments="p:PythonObject" Name="Script" />
@@ -127,7 +127,7 @@
           <x:Boolean x:Key="IsPinned">False</x:Boolean>
         </scg:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="933,1854" sap2010:WorkflowViewState.IdRef="Sequence_7">
+      <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="502,1854" sap2010:WorkflowViewState.IdRef="Sequence_7">
         <Sequence.Variables>
           <Variable x:TypeArguments="x:String" Default="fcruz@edraycpl.com" Name="EvergreenUsername" />
           <Variable x:TypeArguments="x:String" Default="fcruz2018" Name="EvergreenPassword" />
@@ -164,11 +164,14 @@
             <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="f5aa37c455832af619d54a623d605c35" Selector="&lt;html app='chrome.exe' title='ETS LINK' /&gt;&lt;webctrl id='button-1016-btnEl' tag='SPAN' /&gt;" WaitForReady="INTERACTIVE" />
           </ui:Click.Target>
         </ui:Click>
-        <ui:UiElementExists DisplayName="Element Exists 'IMG  verifyImg'" Exists="[captcha]" sap:VirtualizedContainerService.HintSize="464,106" sap2010:WorkflowViewState.IdRef="UiElementExists_1">
-          <ui:UiElementExists.Target>
-            <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" InformativeScreenshot="6fb8e2d590ed7fe6e13621c5c9d53e32" Selector="&lt;html app='chrome.exe' title='ETS LINK' /&gt;&lt;webctrl id='verCntr-innerCt' tag='DIV' /&gt;" TimeoutMS="3000" WaitForReady="INTERACTIVE" />
-          </ui:UiElementExists.Target>
-        </ui:UiElementExists>
+        <ui:ImageFound DisplayName="Image Exists 'chrome.exe  ETS LINK'" Found="[captcha]" sap:VirtualizedContainerService.HintSize="464,106" sap2010:WorkflowViewState.IdRef="ImageFound_2">
+          <ui:ImageFound.Image>
+            <ui:ImageTarget Image="{x:Null}" Accuracy="0.8" TargetImageBase64="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" />
+          </ui:ImageFound.Image>
+          <ui:ImageFound.Target>
+            <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Selector="&lt;html app='chrome.exe' title='ETS LINK' /&gt;" TimeoutMS="3000" WaitForReady="INTERACTIVE" />
+          </ui:ImageFound.Target>
+        </ui:ImageFound>
         <If Condition="[captcha]" sap:VirtualizedContainerService.HintSize="464,760" sap2010:WorkflowViewState.IdRef="If_3">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -192,7 +195,7 @@
                     <ActivityFunc.Argument>
                       <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
                     </ActivityFunc.Argument>
-                    <ui:GoogleOCR FilterRegion="{x:Null}" Text="{x:Null}" AllowedCharacters="" DeniedCharacters="" ExtractWords="False" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="GoogleOCR_1" Image="[Image]" Invert="False" Language="eng" Profile="Screen" Scale="2" />
+                    <ui:GoogleOCR FilterRegion="{x:Null}" Output="{x:Null}" Text="{x:Null}" AllowedCharacters="" ComputeSkewAngle="False" DeniedCharacters="" ExtractWords="False" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="GoogleOCR_1" Image="[Image]" Invert="False" Language="eng" Profile="Screen" Scale="2" />
                   </ActivityFunc>
                 </ui:GetOCRText.OCREngine>
                 <ui:GetOCRText.Target>
@@ -236,7 +239,7 @@
           </ui:SendHotkey.Target>
         </ui:SendHotkey>
       </Sequence>
-      <Assign sap:VirtualizedContainerService.HintSize="933,60" sap2010:WorkflowViewState.IdRef="Assign_3">
+      <Assign sap:VirtualizedContainerService.HintSize="502,60" sap2010:WorkflowViewState.IdRef="Assign_3">
         <Assign.To>
           <OutArgument x:TypeArguments="x:Int32">[index]</OutArgument>
         </Assign.To>
@@ -244,7 +247,7 @@
           <InArgument x:TypeArguments="x:Int32">0</InArgument>
         </Assign.Value>
       </Assign>
-      <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="933,1178" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[Containers.ToList]">
+      <ui:ForEach x:TypeArguments="x:Object" CurrentIndex="{x:Null}" DisplayName="For Each" sap:VirtualizedContainerService.HintSize="502,1178" sap2010:WorkflowViewState.IdRef="ForEach`1_2" Values="[Containers.ToList]">
         <ui:ForEach.Body>
           <ActivityAction x:TypeArguments="x:Object">
             <ActivityAction.Argument>
@@ -476,7 +479,7 @@
           </ActivityAction>
         </ui:ForEach.Body>
       </ui:ForEach>
-      <p:PythonScope DisplayName="Python Scope" sap:VirtualizedContainerService.HintSize="933,281" sap2010:WorkflowViewState.IdRef="PythonScope_3" Path="C:\Python36" TargetPlatform="x64">
+      <p:PythonScope DisplayName="Python Scope" sap:VirtualizedContainerService.HintSize="502,281" sap2010:WorkflowViewState.IdRef="PythonScope_3" Path="C:\Python36" TargetPlatform="x64">
         <p:PythonScope.Body>
           <ActivityAction x:TypeArguments="x:Object">
             <ActivityAction.Argument>
@@ -500,7 +503,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </p:PythonScope>
-      <ui:Click DelayBefore="{x:Null}" DelayMS="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click 'IMG'" sap:VirtualizedContainerService.HintSize="933,51" sap2010:WorkflowViewState.IdRef="Click_6" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="True">
+      <ui:Click DelayBefore="{x:Null}" DelayMS="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click 'IMG'" sap:VirtualizedContainerService.HintSize="502,106" sap2010:WorkflowViewState.IdRef="Click_6" KeyModifiers="None" MouseButton="BTN_LEFT" SendWindowMessages="False" SimulateClick="True">
         <ui:Click.CursorPosition>
           <ui:CursorPosition Position="Center">
             <ui:CursorPosition.OffsetX>
@@ -512,16 +515,16 @@
           </ui:CursorPosition>
         </ui:Click.CursorPosition>
         <ui:Click.Target>
-          <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="6a4d1f5927299fb776ec7998c2f66a41" Selector="&lt;html app='chrome.exe' title='Equipment Moves Inquire' /&gt;&lt;webctrl id='button-1020' tag='A' aaname='Logout' /&gt;" WaitForReady="INTERACTIVE" />
+          <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" TimeoutMS="{x:Null}" InformativeScreenshot="6a4d1f5927299fb776ec7998c2f66a41" Selector="&lt;html app='chrome.exe' title='Equipment Moves Inquire' /&gt;&lt;webctrl id='button-10*' aaname='Logout' idx='2' /&gt;" WaitForReady="INTERACTIVE" />
         </ui:Click.Target>
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </ui:Click>
-      <ui:CloseTab Browser="[chromeBrowser]" DisplayName="Close Tab" sap:VirtualizedContainerService.HintSize="933,22" sap2010:WorkflowViewState.IdRef="CloseTab_2" />
+      <ui:CloseTab Browser="[chromeBrowser]" DisplayName="Close Tab" sap:VirtualizedContainerService.HintSize="502,22" sap2010:WorkflowViewState.IdRef="CloseTab_2" />
     </Sequence>
   </Sequence>
 </Activity>
