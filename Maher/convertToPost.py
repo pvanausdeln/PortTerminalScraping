@@ -76,7 +76,7 @@ def MaherPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
         postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-        
+
         postJson["reportSource"] = "OceanEvent"
         postJson["resolvedEventSource"] = "Maher RPA"
         postJson["codeType"] = "UNLOCODE"
@@ -99,32 +99,39 @@ def MaherPost(step):
 
         headers = {'content-type':'application/json'}
         #The following will be stored if no out activity occurs and if a trucker event the receiver name is added
-        if("InVessel Activity" in data and data["InVessel Activity"] != ""):
+        if(data["Event"]=="InVessel Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"]= datetime.datetime.strptime(data["InVessel Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
-        elif("InTruck Activity" in data and data["InTruck Activity"] != ""):
+        elif(data["Event"]=="InTruck Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"] = datetime.datetime.strptime(data["InTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"
-            postJson["receiverName"]= data["In_Trucker"]
+            postJson["receiverName"]= data["ReceiverName"]
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
             print(json.dumps(postJson))
         #The above event will be overwritten as out Activities happen the latest and if a trucker event then receiver name is added
-        if("OutVessel Activity" in data and data["OutVessel Activity"] != ""):
+        if(data["Event"]=="OutVessel Activity" and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]= datetime.datetime.strptime(data["OutVessel Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
-        elif("OutTruck Activity" in data and data["OutTruck Activity"] != ""):
+        elif(data["Event"]=="OutTruck Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]= datetime.datetime.strptime(data["OutTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]= "VD"
-            postJson["receiverName"]= data["Out_Trucker"]
+            postJson["receiverName"]= data["ReceiverName"]
+            r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(r)
+        elif(data["Event"]=="OutRail Activity"  and data["Event_Time"] != ""):
+            postJson["eventName"]= "Vessel Departure"
+            postJson["eventTime"]= datetime.datetime.strptime(data["OutTruck Activity"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
+            postJson["eventCode"]= "VD"
+            postJson["receiverName"]= data["ReceiverName"]
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
 
@@ -134,7 +141,7 @@ def main(containerList, cwd):
         path+=x+"\\\\" #just to add escape sequences for the glob method to work fine
     for container in containerList:
         fileList = glob.glob(path + "ContainerInformation\\"+container+"Step*.json", recursive = True) #get all the json steps
-        
+
         if (not fileList):
             continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
