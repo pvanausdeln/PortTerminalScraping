@@ -6,7 +6,7 @@ import requests
 import datetime
 
 class baseInfo:
-    postURL = "https://demo-apps.blumesolutions.com/shipmentservice-api/v1/bv/shipmentevents"
+    postURL = "https://test-apps.blumesolutions.com/shipmentservice-api/v1/bv/shipmentevents"
 
     shipmentEventBase = {
     "associatedAssetSize": None,
@@ -92,6 +92,7 @@ def TTILongBeachPost(container, postJson, eventCode, eventName):
     postJson["longitude"] = -118.23
     #TODO: config file for different databases
     headers = {'content-type':'application/json'}
+    print(json.dumps(postJson))
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
 
@@ -132,6 +133,12 @@ def TTILongBeach(container, path):
         TTILongBeachPost(container, postJson, "CR", "Carrier Release")
 
 
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    TTILongBeach(container, path)
+
 def main(containerList, cwd):
     path=""
     for x in cwd.split("\\"):
@@ -140,4 +147,5 @@ def main(containerList, cwd):
         TTILongBeach(container, path)
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    testMain(sys.argv[1])
+    #main(sys.argv[1], sys.argv[2])
