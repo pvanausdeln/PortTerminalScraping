@@ -105,6 +105,7 @@ def MaherPost(step):
             postJson["eventCode"]="VA"
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
+            print(json.dumps(postJson))
         elif(data["Event"]=="InTruck Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"] = datetime.datetime.strptime(data["Event_Time"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
@@ -120,6 +121,7 @@ def MaherPost(step):
             postJson["eventCode"]= "VD"
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
+            print(json.dumps(postJson))
         elif(data["Event"]=="OutTruck Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]= datetime.datetime.strptime(data["Event_Time"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
@@ -127,6 +129,7 @@ def MaherPost(step):
             postJson["receiverName"]= data["ReceiverName"]
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
+            print(json.dumps(postJson))
         elif(data["Event"]=="OutRail Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Departure"
             postJson["eventTime"]= datetime.datetime.strptime(data["Event_Time"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
@@ -134,6 +137,19 @@ def MaherPost(step):
             postJson["receiverName"]= data["ReceiverName"]
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
+            print(json.dumps(postJson))
+
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\" #just to add escape sequences for the glob method to work fine
+    fileList = glob.glob(path + "ContainerInformation\\"+container+"Step*.json", recursive = True) #get all the json steps
+    if (not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        MaherPost(step)
 
 def main(containerList, cwd):
     path=""
@@ -150,4 +166,5 @@ def main(containerList, cwd):
             MaherPost(step)
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    testMain(sys.argv[1])
+    #main(sys.argv[1], sys.argv[2])
