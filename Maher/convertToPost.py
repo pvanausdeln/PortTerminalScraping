@@ -98,6 +98,8 @@ def MaherPost(step):
         postJson["unitSize"]= data["Unit Size"][0:2]
 
         headers = {'content-type':'application/json'}
+        if(data.get("Event") is None):
+            return
         #The following will be stored if no out activity occurs and if a trucker event the receiver name is added
         if(data["Event"]=="InVessel Activity"  and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Arrival"
