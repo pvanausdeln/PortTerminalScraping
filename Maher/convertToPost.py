@@ -106,7 +106,7 @@ def MaherPost(step):
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
             print(json.dumps(postJson))
-        elif(data["Event"]=="InTruck Activity"  and data["Event_Time"] != ""):
+        elif(data["Event"]=="InTruck Activity" and data["Event_Time"] != ""):
             postJson["eventName"]= "Vessel Arrival"
             postJson["eventTime"] = datetime.datetime.strptime(data["Event_Time"], '%Y-%m-%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
             postJson["eventCode"]="VA"

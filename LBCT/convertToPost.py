@@ -100,21 +100,22 @@ def LBCTPost(container, path):
         postJson["billOfLadingNumber"] = data["BOLNumber"]
         postJson["vessel"] = data["Vessel"]
         postJson["voyageNumber"] = data["Voyage"]
-        with open(r""+path+"ContainerInformation\\"+container+".csv") as csvData:
-            csv_reader = csv.reader(csvData, delimiter=',')
-            holdJson = copy.deepcopy(postJson)
-            for row in csv_reader:
-                if(row[1] == "APPLIED"):
-                    continue
-                holdJson["eventCode"], holdJson["eventName"] = LBCTStep(row[0])
-                if(holdJson["eventCode"] is None):
-                    continue
-                holdJson["eventTime"] = datetime.datetime.strptime(row[1], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
-                headers = {'content-type':'application/json'}
-                r = requests.post(baseInfo.postURL, data = json.dumps(holdJson), headers = headers, verify = False)
-        if(data["Discharged"].find("Actual") == -1):
+        if(os.path.exists(r""+path+"ContainerInformation\\"+container+".csv")):
+            with open(r""+path+"ContainerInformation\\"+container+".csv") as csvData:
+                csv_reader = csv.reader(csvData, delimiter=',')
+                holdJson = copy.deepcopy(postJson)
+                for row in csv_reader:
+                    if(row[1] == "APPLIED"):
+                        continue
+                    holdJson["eventCode"], holdJson["eventName"] = LBCTStep(row[0])
+                    if(holdJson["eventCode"] is None):
+                        continue
+                    holdJson["eventTime"] = datetime.datetime.strptime(row[1], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+                    headers = {'content-type':'application/json'}
+                    r = requests.post(baseInfo.postURL, data = json.dumps(holdJson), headers = headers, verify = False)
+        if(data.get("Discharged").find("Actual") == -1):
             return
-        elif(data["Available for Pickup"].find("Yes") != -1):
+        elif(data.get("Available for Pickup").find("Yes") != -1):
             postJson["eventCode"], postJson["eventName"] = ("APL", "Arrived Pickup Location")
             postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
             headers = {'content-type':'application/json'}
