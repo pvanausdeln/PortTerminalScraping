@@ -81,7 +81,6 @@ def getSize(size):
 def Seattle46Post(container, postJson, eventCode, eventName):
     postJson["eventName"] = eventName
     postJson["eventCode"] = eventCode
-    postJson["signedBy"] = "Gandalf"
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Seattle T46 RPA"
     postJson["codeType"] = "UNLOCODE"
@@ -95,6 +94,7 @@ def Seattle46Post(container, postJson, eventCode, eventName):
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
+    print(json.dumps(postJson))
 
 
 def Seattle46(container, path):
@@ -133,6 +133,11 @@ def Seattle46(container, path):
     if(data["Carrier Status"].find("Released") != -1):
         Seattle46Post(container, postJson, "CR", "Carrier Release")
 
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    Seattle46(container, path)
 
 def main(containerList, cwd):
     path=""
@@ -142,4 +147,5 @@ def main(containerList, cwd):
         Seattle46(container, path)
 
 if __name__ == "__main__":
+    #testMain(sys.argv[1])
     main(sys.argv[1], sys.argv[2])
