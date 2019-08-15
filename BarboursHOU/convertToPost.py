@@ -85,13 +85,19 @@ def getEvent(event):
 	    return("CB", "Chassis Tie")
     elif(event.find("UNIT_REROUTE") != -1):
 	    return("AI", "Shipment has been reconsigned")
-    elif(event.find("UNIT_RECEIVE") != -1):
+    elif(event.find("UNIT_DELIVER") != -1):
+        return("OFD", "Out for Delivery")
+    elif(event.find("UNIT_IN_GATE") != -1):
 	    return("I", "In-Gate")
+    elif(event.find("UNIT_OUT_GATE") != -1):
+	    return("OA", "Out-Gate")
+    elif(event.find("UNIT_RECEIVE") != -1):
+        return("R", "RECEIVED")
     elif(event.find("UNIT_YARD_MOVE") != -1):
 	    return("TM", "Intra-Terminal Movement")
     elif(event.find("UNIT_DISCH") != -1):
 	    return("UV", "Unloaded from Vessel")
-    print("failed")
+    print("failed: " + event)
     return(None, None)
 
 def BarboursPost(step):
@@ -132,6 +138,18 @@ def BarboursPost(step):
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
 
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+    if(not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        BarboursPost(step)
+
 def main(containerList, cwd):
     path=""
     for x in cwd.split("\\"):
@@ -146,4 +164,5 @@ def main(containerList, cwd):
             BarboursPost(step)
 
 if __name__ == "__main__":
+    #testMain(sys.argv[1])
     main(sys.argv[1], sys.argv[2])
