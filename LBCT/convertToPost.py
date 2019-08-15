@@ -5,6 +5,7 @@ import copy
 import requests
 import datetime
 import csv
+import glob
 
 class baseInfo:
     postURL = "https://test-apps.blumesolutions.com/shipmentservice-api/v1/bv/shipmentevents"
@@ -83,9 +84,11 @@ def LBCTPost(container, path):
     if os.path.isfile(path+"ContainerInformation\\"+container+".json"):
         with open(r""+path+"ContainerInformation\\"+container+".json") as jsonData:
             data = json.load(jsonData)
-        postJson["unitId"] = data["Container"]
-        postJson["unitSize"] = data["Size"]
-        postJson["unitTypeCode"] = data["Type"]
+        postJson["unitId"] = data.get("Container")
+        if(data.get("Size").isdigit()):
+            postJson["unitSize"] = data.get("Size")
+        if(data.get("Type").isdigit()):
+            postJson["unitTypeCode"] = data.get("Type")
 
         postJson["reportSource"] = "OceanEvent"
         postJson["codeType"] = "UNLOCODE"
@@ -96,10 +99,10 @@ def LBCTPost(container, path):
         postJson["country"] = "US"
         postJson["latitude"] = 33.77
         postJson["longitude"] = -118.21
-        postJson["workOrderNumber"] = data["WONumber"]
-        postJson["billOfLadingNumber"] = data["BOLNumber"]
-        postJson["vessel"] = data["Vessel"]
-        postJson["voyageNumber"] = data["Voyage"]
+        postJson["workOrderNumber"] = data.get("WONumber")
+        postJson["billOfLadingNumber"] = data.get("BOLNumber")
+        postJson["vessel"] = data.get("Vessel")
+        postJson["voyageNumber"] = data.get("Voyage")
         if(os.path.exists(r""+path+"ContainerInformation\\"+container+".csv")):
             with open(r""+path+"ContainerInformation\\"+container+".csv") as csvData:
                 csv_reader = csv.reader(csvData, delimiter=',')
@@ -117,16 +120,24 @@ def LBCTPost(container, path):
             return
         elif(data.get("Available for Pickup").find("Yes") != -1):
             postJson["eventCode"], postJson["eventName"] = ("APL", "Arrived Pickup Location")
-            postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+            postJson["eventTime"] = datetime.datetime.strptime(data.get("Discharged").rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
             headers = {'content-type':'application/json'}
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
-        postJson["eventCode"], postJson["eventName"] = ("DI", "Discharged")
-        postJson["eventTime"] = datetime.datetime.strptime(data["Discharged"].rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
+        postJson["eventCode"], postJson["eventName"] = ("UV", "Unloaded from Vessel")
+        postJson["eventTime"] = datetime.datetime.strptime(data.get("Discharged").rsplit(" ", 1)[0], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M') + ":00"
         headers = {'content-type':'application/json'}
+        print(json.dumps(postJson))
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
         return
     else:
         return
+
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+
+    LBCTPost(container, path)
 
 def main(containerList, cwd):
     path=""
@@ -137,4 +148,5 @@ def main(containerList, cwd):
         LBCTPost(container, path)
 
 if __name__=="__main__":
+    #testMain(sys.argv[1])
     main(sys.argv[1], sys.argv[2])
