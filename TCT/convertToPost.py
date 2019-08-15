@@ -101,25 +101,34 @@ def TCTPost(step):
         postJson["country"] = "US"
         postJson["latitude"] = 47.27
         postJson["longitude"] = -122.41
-        postJson["vessel"] = data["Vessel"]
-        postJson["voyageNumber"] = data["Voyage"]
-        postJson["billOfLadingNumber"] = data["BOLNumber"]
-        postJson["workOrderNumber"] = data["WONumber"]
+        postJson["vessel"] = data.get("Vessel")
+        postJson["voyageNumber"] = data.get("Voyage")
+        postJson["billOfLadingNumber"] = data.get("BOLNumber")
+        postJson["workOrderNumber"] = data.get("WONumber")
         postJson["reportSource"] = "OceanEvent"
 
-        postJson["unitId"] = data["Container"].replace("-","")
-        postJson["carrierName"] = data["SSCO"]
-        postJson["unitTypeCode"] = data["Type"]
-        postJson["unitSize"] = data["Length"].replace("'", "")
-        postJson["eventCode"], postJson["eventName"], postJson["eventTime"] = TCTStep(data["Current State"])
+        postJson["unitId"] = data.get("Container").replace("-","")
+        postJson["carrierName"] = data.get("SSCO")
+        postJson["unitTypeCode"] = data.get("Type")
+        postJson["unitSize"] = data.get("Length").replace("'", "")
+        postJson["eventCode"], postJson["eventName"], postJson["eventTime"] = TCTStep(data.get("Current State"))
         if(postJson["eventCode"] != None):
             headers = {'content-type':'application/json'}
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
             print(r)
             print(json.dumps(postJson))
 
-
-
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    fileList = glob.glob(r""+path+"ContainerInformation\\"+container+".json", recursive = True) #get all the json steps
+    if (not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        TCTPost(step)
 
 def main(containerList, cwd):
     path=""
@@ -135,4 +144,5 @@ def main(containerList, cwd):
             TCTPost(step)
 
 if __name__=="__main__":
-    main(sys.argv[1], sys.argv[2])
+    testMain(sys.argv[1])
+    #main(sys.argv[1], sys.argv[2])
