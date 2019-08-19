@@ -5,6 +5,7 @@ import copy
 import requests
 import datetime
 import glob
+import csv
 
 class baseInfo:
     postURL = "https://test-apps.blumesolutions.com/shipmentservice-api/v1/bv/shipmentevents"
@@ -71,69 +72,89 @@ class baseInfo:
     "workOrderNumber": None
     }
 
-def TermontStep(event):
-    if(event.find("LOAD-OUT") != -1):
-        return("OA","OUTGATE")
-    elif(event.find("DISCHARGED") != -1):
-        return("UV","Unloaded from Vessel")
-    elif(event.find("LOADED") != -1):
-        return("AE","Loaded on Vessel")
-    elif(event.find("EMPTY-IN") or event.find("LOAD-IN") != -1):
-        return("I","INGATE")
-    elif(event.find("UNLOADED FROM RAIL") != -1):
-        return("UR","UNLOADED_FROM_RAIL")
-    elif(event.find("RAIL ARRIVAL") != -1):
-        return("AR", "RAIL_ARRIVAL")
-    else:
-        return(None, None)
+def outEvents(reader, postJson):
+    if(reader[2][20] == "VESSEL"):
+        postJson["eventCode"], postJson["eventName"] = ("VD", "Vessel Departure")
+    elif(reader[2][20] == "TRUCK"):
+        postJson["eventCode"], postJson["eventName"] = ("OA", "OUTGATE")
+    if(postJson["eventCode"] is not None):
+        print(postJson["eventCode"])
+        postJson["eventTime"] = datetime.datetime.strptime(reader[2][22] + " " + reader[2][23], '%Y/%m/%d %H:%M').strftime('%m-%d-%Y %H:%M:%S')
+        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = {'content-type':'application/json'}, verify = False)
+        print(r)
+        print(json.dumps(postJson))
 
-
-def TermontPost(step):
-    with open(step) as jsonData:
-        data = json.load(jsonData)
-        postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-
-        postJson["resolvedEventSource"] = "Termont LA RPA"
-        postJson["codeType"] = "UNLOCODE"
-        postJson["location"] = "630 W Harry Bridges Blvd, Wilmington, CA 90744"
-        postJson["city"] = "Los Angeles"
-        postJson["state"] = "CA"
-        postJson["country"] = "US"
-        postJson["latitude"] = 33.77
-        postJson["longitude"] = -118.27
-        postJson["vessel"] = data["Vessel"]
-        postJson["voyageNumber"] = data["Voyage"]
-        postJson["billOfLadingNumber"] = data["BOLNumber"]
-        postJson["workOrderNumber"] = data["WONumber"]
-        postJson["reportSource"] = "OceanEvent"
-
-        postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%m/%d/%Y %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
-        postJson["unitId"] = data["Container"]
-        postJson["unitSize"] = data["SIZE"]
-        postJson["unitTypeCode"] = data["HEIGHT"]
-        postJson["eventCode"], postJson["eventName"] = TermontStep(data["Action"])
-        if(postJson["eventCode"] == None):
-            return
-        headers = {'content-type':'application/json'}
-        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+def inEvents(reader, postJson):
+    if(reader[1][20] == "VESSEL"):
+        postJson["eventCode"], postJson["eventName"] = ("VA", "Vessel Arrival")
+    elif(reader[1][20] == "TRUCK"):
+        postJson["eventCode"], postJson["eventName"] = ("I", "INGATE")
+    if(postJson["eventCode"] is not None):
+        postJson["eventTime"] = datetime.datetime.strptime(reader[1][22] + " " + reader[1][23], '%Y/%m/%d %H:%M').strftime('%m-%d-%Y %H:%M:%S')
+        r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = {'content-type':'application/json'}, verify = False)
         print(r)
         print(json.dumps(postJson))
 
 
+def checkOtherNums(reader):
+    WO, BOL, SRN = (None, None, None)
+    for i in range(24, 27):
+        if(reader[1][i] == "WorkOrder"):
+            WO = reader[2][i]
+        elif(reader[1][i] == "BOLNumber"):
+            BOL = reader[2][i]
+        elif(reader[1][i] == "ReferenceNumbers"):
+            SRN = reader[2][i]
+    return (WO, BOL, SRN)
 
+def TermontPost(container, path):
+    if(os.path.isfile(path+"ContainerInformation\\"+container+".csv")):
+        with open(path+"ContainerInformation\\"+container+".csv") as containerInfo:
+            reader = list(csv.reader(containerInfo)) #get rows of csv (2nd row has all the information)
+            postJson = copy.deepcopy(baseInfo.shipmentEventBase)
+
+            postJson["resolvedEventSource"] = "Termont RPA"
+            postJson["codeType"] = "UNLOCODE"
+            postJson["location"] = "Montreal, QC H1N 3K9, Canada"
+            postJson["city"] = "Montreal"
+            postJson["state"] = "QC"
+            postJson["country"] = "CA"
+            postJson["latitude"] = 45.58
+            postJson["longitude"] = -73.51
+            postJson["unitId"] = container
+            postJson["vessel"] = reader[2][8]
+            postJson["voyageNumber"] = reader[2][9]
+            postJson["billOfLadingNumber"], postJson["workOrderNumber"], postJson["shipmentReferenceNumber"] = checkOtherNums(reader)
+            postJson["reportSource"] = "OceanEvent"
+            postJson["unitSize"] = reader[2][2]
+            postJson["unitTypeCode"] = reader[2][3]
+            postJson["carrierCode"] = reader[2][1]
+            postJson["carrierName"] = reader[2][21]
+            postJson["destinationCity"] = reader[2][12]
+            inEvents(reader, postJson)
+            postJson["eventCode"], postJson["eventName"] = (None, None)
+            outEvents(reader, postJson)
+
+
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    TermontPost(container, path)
 
 def main(containerList, cwd):
     path=""
     for x in cwd.split("\\"):
         path+=x+"\\\\"
     for container in containerList:
-        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+        fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'.csv', recursive = True) #get all the json steps
         if (not fileList):
             continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
-            TermontPost(step)
+            TermontPost(step, path)
 
 if __name__=="__main__":
+    #testMain(sys.argv[1])
     main(sys.argv[1], sys.argv[2])
