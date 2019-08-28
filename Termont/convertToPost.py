@@ -78,7 +78,6 @@ def outEvents(reader, postJson):
     elif(reader[2][20] == "TRUCK"):
         postJson["eventCode"], postJson["eventName"] = ("OA", "OUTGATE")
     if(postJson["eventCode"] is not None):
-        print(postJson["eventCode"])
         postJson["eventTime"] = datetime.datetime.strptime(reader[2][22] + " " + reader[2][23], '%Y/%m/%d %H:%M').strftime('%m-%d-%Y %H:%M:%S')
         r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = {'content-type':'application/json'}, verify = False)
         print(r)
