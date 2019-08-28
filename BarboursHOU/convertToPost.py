@@ -104,7 +104,7 @@ def BarboursPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
-        
+
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "BARBOURS RPA"
     postJson["codeType"] = "UNLOCODE"
@@ -112,7 +112,7 @@ def BarboursPost(step):
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
-		
+
 
     postJson["longitude"] = -95.00
     postJson["latitude"] = 29.68
@@ -132,11 +132,12 @@ def BarboursPost(step):
     postJson["eventCode"], postJson["eventName"] = getEvent(data["Event"])
     #we only need this line of code if the datetime has unprintable characters
     #postJson["eventTime"] = ''.join(x for x in data["datetime"] if x in string.printable)
-    if(postJson["eventCode"] is None):
-        return
+    # if(postJson["eventCode"] is None):
+    #     return
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     print(r)
+
 
 def testMain(container):
     path=""
@@ -162,6 +163,7 @@ def main(containerList, cwd):
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
         for step in fileList:
             BarboursPost(step)
+            
 
 if __name__ == "__main__":
     #testMain(sys.argv[1])
