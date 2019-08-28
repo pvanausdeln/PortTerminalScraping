@@ -114,7 +114,7 @@ def PackerPost(step):
     postJson["notes"]=data.get("Notes")
     postJson["unitState"] = data.get("Description").split(",")[0]
     try:
-        postJson["unitTypeCode"] = data.get("Description").split(",")[3] + getType(data.get("Description").split(",")[2])
+        postJson["unitSize"] = data.get("Description").split(",")[-1]
         postJson["eventName"], postJson["eventCode"] = Event(data.get("Last Move/Datetime").split(",")[0])
     except:
         return
@@ -130,6 +130,17 @@ def PackerPost(step):
     headers = {'content-type':'application/json'}
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'.json', recursive = True) #get all the json steps
+    if(not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        PackerPost(step)
 
 def main(containerList, cwd):
     path=""
@@ -145,4 +156,5 @@ def main(containerList, cwd):
             PackerPost(step)
 
 if __name__=="__main__":
-    main(sys.argv[1], sys.argv[2])
+    testMain(sys.argv[1])
+    #main(sys.argv[1], sys.argv[2])

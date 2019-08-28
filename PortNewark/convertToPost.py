@@ -100,18 +100,30 @@ def NewarkPost(step):
             postJson["eventTime"] = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
             headers = {'content-type':'application/json'}
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(json.dumps(postJson))
             print(r)
         if(data["Freight Status"].find("RELEASED") != -1):
             postJson["eventCode"], postJson["eventName"] = ("FS", "Freight Release")
             postJson["eventTime"] = datetime.datetime.now().strftime("%m-%d-%Y %H:%M:%S")
             headers = {'content-type':'application/json'}
             r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
+            print(json.dumps(postJson))
             print(r)
         if(postJson["eventCode"] == None):
             return
         
 
-
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'.json', recursive = True) #get all the json steps
+    if(not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        NewarkPost(step)
 
 
 def main(containerList, cwd):
@@ -128,4 +140,5 @@ def main(containerList, cwd):
             NewarkPost(step)
 
 if __name__=="__main__":
-    main(sys.argv[1], sys.argv[2])
+    testMain(sys.argv[1])
+    #main(sys.argv[1], sys.argv[2])
