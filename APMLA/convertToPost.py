@@ -115,8 +115,8 @@ def APMLAEventTranslate(postJson, eventText): #why doesn't python have case swit
     print(r)
     return
 
-def APMLAEventRead(container, postJson):
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") as csvData:
+def APMLAEventRead(container, postJson, path):
+    with open(r""+path+"ContainerInformation\\"+container+".csv") as csvData:
         csv_reader = csv.reader(csvData, delimiter=',')
         for row in csv_reader:
             if(row[0].find("Performed") != -1): #skip title row
@@ -125,19 +125,19 @@ def APMLAEventRead(container, postJson):
             postJson["eventTime"] = datetime.datetime.strptime(postJson["eventTime"], '%m/%d/%Y %H:%M').strftime('%m-%d-%Y %H:%M:%S')
             APMLAEventTranslate(postJson, row[1])
 
-def APMLAPost(container):
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") == False): #is there a legitimate event
+def APMLAPost(container, path):
+    if(os.path.isfile(r""+path+"ContainerInformation\\"+container+".json") == False): #is there a legitimate event
         return
-    if(os.path.isfile(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".csv") == False):
+    if(os.path.isfile(r""+path+"ContainerInformation\\"+container+".csv") == False):
         return
-    with open(r"c:\\Users\\pvanausdeln\\Dropbox (Blume Global)\\Documents\\UiPath\\PortTerminalScraping\\APMLA\\ContainerInformation\\"+container+".json") as jsonData:
+    with open(r""+path+"ContainerInformation\\"+container+".json") as jsonData:
         data = json.load(jsonData)
 
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     postJson["unitId"] = data["Container ID"]
     postJson["billOfLadingNumber"] = data["Bill Of Lading"]
-    postJson["unitSize"] = data["Size/Type/Height"].split("/")[0]
-    postJson["unitType"] = data["Size/Type/Height"].split("/")[1]
+    postJson["unitSize"] = data["Size / Type / Height"].split("/")[0]
+    postJson["unitType"] = data["Size / Type / Height"].split("/")[1]
 
     postJson["location"] = "2500 Navy Way, San Pedro, CA 90731"
     postJson["city"] = "Los Angeles"
@@ -155,12 +155,19 @@ def APMLAPost(container):
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
 
-    APMLAEventRead(container, postJson)
+    APMLAEventRead(container, postJson, path)
     return
 
-def main(containerList):
+def testMain(container):
+    APMLAPost(container)
+
+def main(containerList, cwd):
+    path=""
+    for x in cwd.split("\\"):
+        path+=x+"\\\\"
     for container in containerList:
-        APMLAPost(container)
+        APMLAPost(container, path)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    #testMain(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
