@@ -74,7 +74,7 @@ class baseInfo:
 def EverportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
-    if(data["Move Type"] not in ["Discharge", "Load", "Export In", "Empty In", "Empty Out"]):
+    if(data["Move Type"] not in ["Discharge", "Load", "Export In", "Empty In", "Empty Out", "Import"]):
         return
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     if(data["Move Type"] == "Discharge"):
@@ -92,6 +92,9 @@ def EverportPost(step):
     elif(data["Move Type"] == "Empty Out"):
         postJson["eventCode"] = "EE"
         postJson["eventCode"] = "Empty Equipment Dispatched"
+    elif(data["Move Type"] == "Import"):
+        postJson["eventCode"] = "EE"
+        postJson["eventName"] = "Empty Equipment Dispatched"
     
     postJson["eventTime"] = datetime.datetime.strptime(data["Datetime"], '%Y/%m/%d %H:%M:%S').strftime('%m-%d-%Y %H:%M:%S')
     if(postJson["eventTime"].find(str(datetime.datetime.now().year))) == -1: #it is the current year

@@ -74,7 +74,7 @@ class baseInfo:
 def EverportPost(step):
     with open(step) as jsonData:
         data = json.load(jsonData)
-    if(data["Move Type"] not in ["Discharge", "Load", "Export In", "Empty In", "Empty Out"]):
+    if(data["Move Type"] not in ["Discharge", "Load", "Export In", "Empty In", "Empty Out", "Import"]):
         return
     postJson = copy.deepcopy(baseInfo.shipmentEventBase)
     if(data["Move Type"] == "Discharge"):
@@ -90,6 +90,9 @@ def EverportPost(step):
         postJson["eventCode"] = "I"
         postJson["eventName"] = "INGATE"
     elif(data["Move Type"] == "Empty Out"):
+        postJson["eventCode"] = "EE"
+        postJson["eventName"] = "Empty Equipment Dispatched"
+    elif(data["Move Type"] == "Import"):
         postJson["eventCode"] = "EE"
         postJson["eventName"] = "Empty Equipment Dispatched"
 
@@ -121,6 +124,18 @@ def EverportPost(step):
     r = requests.post(baseInfo.postURL, data = json.dumps(postJson), headers = headers, verify = False)
     return
 
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+    if (not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        EverportPost(step)
+
 def main(containerList, cwd):
     path=""
     for x in cwd.split("\\"):
@@ -135,4 +150,5 @@ def main(containerList, cwd):
             EverportPost(step)
 
 if __name__=="__main__":
-    main(sys.argv[1], sys.argv[2])
+    testMain(sys.argv[1])
+    #main(sys.argv[1], sys.argv[2])
