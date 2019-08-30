@@ -101,12 +101,7 @@ def ITSLBPost(step):
 
     postJson["resolvedEventSource"] = "ITS LBC RPA"
     postJson["codeType"] = "UNLOCODE"
-    postJson["location"] = "1281 Pier G E, Long Beach, CA 90802"
-    postJson["city"] = "Long Beach"
-    postJson["state"] = "CA"
-    postJson["country"] = "US"
-    postJson["latitude"] = 33.75
-    postJson["longitude"] = -118.19
+    postJson["location"] = data.get("POL")
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]

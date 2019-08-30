@@ -101,12 +101,7 @@ def HuskyPost(step):
 
     postJson["resolvedEventSource"] = "HUSKY TAC RPA"
     postJson["codeType"] = "UNLOCODE"
-    postJson["location"] = "1101 Port of Tacoma Rd, Tacoma, WA 98421"
-    postJson["city"] = "Tacoma"
-    postJson["state"] = "WA"
-    postJson["country"] = "US"
-    postJson["latitude"] = 47.27
-    postJson["longitude"] = -122.40
+    postJson["location"] = data.get("POL")
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
