@@ -371,7 +371,7 @@
                                   <ui:CreateDirectory ContinueOnError="{x:Null}" DisplayName="Create Directory" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="./ContainerInformation/" />
                                 </If.Else>
                               </If>
-                              <ui:WriteTextFile DisplayName="Write Text File" FileName="[&quot;./ContainerInformation/&quot; + Containers.ToList().ElementAt(index).ToString + &quot;Step&quot;+rowIndex.ToString+&quot;.json&quot;]" sap:VirtualizedContainerService.HintSize="398,87" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[jsonString]">
+                              <ui:WriteTextFile DisplayName="Write Text File" FileName="[&quot;./ContainerInformation/&quot; + item.ToString + &quot;Step&quot;+rowIndex.ToString+&quot;.json&quot;]" sap:VirtualizedContainerService.HintSize="398,87" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[jsonString]">
                                 <sap:WorkflowViewStateService.ViewState>
                                   <scg:Dictionary x:TypeArguments="x:String, x:Object">
                                     <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -461,7 +461,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </ui:Click>
-      <Delay Duration="2.00:00:00" sap:VirtualizedContainerService.HintSize="897,22" sap2010:WorkflowViewState.IdRef="Delay_2" />
+      <Delay Duration="00:00:02" sap:VirtualizedContainerService.HintSize="897,22" sap2010:WorkflowViewState.IdRef="Delay_2" />
       <ui:CloseTab Browser="[chromeBrowser]" DisplayName="Close Tab" sap:VirtualizedContainerService.HintSize="897,22" sap2010:WorkflowViewState.IdRef="CloseTab_1" />
     </Sequence>
   </Sequence>
