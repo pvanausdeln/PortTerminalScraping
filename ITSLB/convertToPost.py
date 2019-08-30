@@ -128,6 +128,18 @@ def ITSLBPost(step):
     print(r)
     print(json.dumps(postJson))
 
+def testMain(container):
+    path=""
+    for x in os.getcwd().split("\\"):
+        path+=x+"\\\\"
+    fileList = glob.glob(r""+path+"ContainerInformation\\"+container+'Step*.json', recursive = True) #get all the json steps
+    if (not fileList):
+        return
+    fileList = [f for f in fileList if container in f] #set of steps for this number
+    fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    for step in fileList:
+        ITSLBPost(step)
+
 def main(containerList, cwd):
     path=""
     for x in cwd.split("\\"):
@@ -142,4 +154,5 @@ def main(containerList, cwd):
             ITSLBPost(step)
 
 if __name__=="__main__":
+    #testMain(sys.argv[1])
     main(sys.argv[1], sys.argv[2])
