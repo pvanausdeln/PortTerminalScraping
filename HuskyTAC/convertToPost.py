@@ -132,6 +132,7 @@ def testMain(container):
         return
     fileList = [f for f in fileList if container in f] #set of steps for this number
     fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+    fileList.reverse()
     for step in fileList:
         HuskyPost(step)
 
@@ -145,6 +146,7 @@ def main(containerList, cwd):
             continue
         fileList = [f for f in fileList if container in f] #set of steps for this number
         fileList.sort(key=os.path.getmtime) #order steps correctly (by file edit time)
+        fileList.reverse() #events in reverse order on site
         for step in fileList:
             HuskyPost(step)
 
