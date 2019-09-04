@@ -101,7 +101,7 @@ def PortEvergladesLBPost(container, path):
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
     postJson["workOrderNumber"] = data["WONumber"]
-    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
+    # postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Port EVERGL RPA"
