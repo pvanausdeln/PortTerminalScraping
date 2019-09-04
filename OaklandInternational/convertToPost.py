@@ -71,19 +71,19 @@ class baseInfo:
     }
 
 def getEvent(data, postJson):
-    if(data["Event"] == "LOAD"):
+    if(data["Event"].find("LOAD")):
         postJson["eventCode"] = "AE"
         postJson["eventName"] = "Loaded on Vessel"
-    elif(data["Event"] == "UNLOAD"):
+    elif(data["Event"].find("UNLOAD")):
         postJson["eventCode"] = "UV"
         postJson["eventName"] = "Unloaded on Vessel"
-    elif(data["Event"] == "FULL IN" or data["Event"] == "EMPTY IN"):
+    elif(data["Event"].find("FULL IN") or data["Event"].find("EMPTY IN")):
         postJson["eventCode"] = "I"
         postJson["eventName"] = "INGATE"
-    elif(data["Event"] == "FULL OUT"):
+    elif(data["Event"].find("FULL OUT")):
         postJson["eventCode"] = "OA"
         postJson["eventName"] = "OUTGATE"
-    elif(data["Event"] == "EMPTY OUT"):
+    elif(data["Event"].find("EMPTY OUT")):
         postJson["eventCode"] = "EE"
         postJson["eventCode"] = "Empty Equipment Dispatched"
     return postJson
@@ -101,7 +101,7 @@ def PortEvergladesLBPost(container, path):
     postJson["vessel"] = data["Vessel"]
     postJson["voyageNumber"] = data["Voyage"]
     postJson["workOrderNumber"] = data["WONumber"]
-    postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
+    #postJson["shipmentReferenceNumber"] = data["ReferenceNumber"]
     postJson["billOfLadingNumber"] = data["BOLNumber"]
     postJson["reportSource"] = "OceanEvent"
     postJson["resolvedEventSource"] = "Port EVERGL RPA"
